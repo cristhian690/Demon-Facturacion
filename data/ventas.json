@@ -1,0 +1,38 @@
+[
+    {
+        "id": 1,
+        "empresa_id": 1,
+        "cliente_id": 2,
+        "tipo_documento": "Factura",
+        "serie": "F001",
+        "numero": "000123",
+        "fecha": "2026-09-17",
+        "almacen_id": 1,
+        "subtotal": 12000,
+        "igv": 2160,
+        "total": 14160,
+        "costo_ventas_total": 14000,
+        "detalles": [
+            {
+                "producto_id": 1,
+                "cantidad": 4,
+                "precio_unitario": 3000,
+                "descuento": 0,
+                "subtotal": 12000,
+                "costo_venta_unitario": 3500,
+                "costo_venta_total": 14000
+            }
+        ],
+        "impacto_simulacion": [
+            {
+                "producto_id": 1,
+                "stock_anterior": 100,
+                "cpp_vigente": 3500,
+                "cantidad_vendida": 4,
+                "precio_venta": 3000,
+                "nuevo_stock": 96,
+                "costo_venta_linea": 14000
+            }
+        ]
+    }
+]

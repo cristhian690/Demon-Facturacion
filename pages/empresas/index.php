@@ -1,0 +1,68 @@
+<?php
+require_once '../../config.php';
+require_once '../../includes/helpers.php';
+
+$empresas = get_data('empresas');
+?>
+<?php include '../../includes/header.php'; ?>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="h3 text-gray-800">Empresas</h2>
+    <a href="<?php echo url('pages/empresas/form.php'); ?>" class="btn btn-primary">
+        <i class="bi bi-plus-circle me-1"></i> Nueva Empresa
+    </a>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+        <h6 class="m-0 font-weight-bold text-primary">Listado de Empresas</h6>
+        <div class="input-group input-group-sm" style="width: 250px;">
+            <input type="text" class="form-control" placeholder="Buscar empresa...">
+            <button class="btn btn-outline-secondary" type="button"><i class="bi bi-search"></i></button>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th width="50">ID</th>
+                        <th>Razón Social</th>
+                        <th>RUC</th>
+                        <th>Dirección</th>
+                        <th>Teléfono</th>
+                        <th>Correo</th>
+                        <th width="100">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (empty($empresas)): ?>
+                        <tr><td colspan="7" class="text-center">No hay empresas registradas</td></tr>
+                    <?php else: ?>
+                        <?php foreach ($empresas as $emp): ?>
+                            <tr>
+                                <td><?php echo $emp['id']; ?></td>
+                                <td class="fw-bold"><?php echo htmlspecialchars($emp['razon_social']); ?>
+                                    <?php if($emp['id'] == $_SESSION['empresa_id']): ?>
+                                        <span class="badge bg-success ms-2">Activa</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td><?php echo htmlspecialchars($emp['ruc']); ?></td>
+                                <td><?php echo htmlspecialchars($emp['direccion']); ?></td>
+                                <td><?php echo htmlspecialchars($emp['telefono']); ?></td>
+                                <td><?php echo htmlspecialchars($emp['correo']); ?></td>
+                                <td>
+                                    <a href="<?php echo url('pages/empresas/form.php?id=' . $emp['id']); ?>" class="btn btn-sm btn-outline-primary" title="Editar">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<?php include '../../includes/footer.php'; ?>

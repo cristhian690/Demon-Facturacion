@@ -1,0 +1,98 @@
+[
+    {
+        "id": 1,
+        "empresa_id": 1,
+        "proveedor_id": 1,
+        "tipo_documento": "Factura",
+        "serie": "F001",
+        "numero": "123",
+        "fecha": "2026-09-17",
+        "almacen_id": 1,
+        "subtotal": 20000,
+        "igv": 3600,
+        "total": 23600,
+        "detalles": [
+            {
+                "producto_id": 3,
+                "cantidad": 10,
+                "costo_unitario": 2000,
+                "subtotal": 20000
+            }
+        ],
+        "impacto_simulacion": [
+            {
+                "producto_id": 3,
+                "stock_anterior": 0,
+                "cpp_anterior": 0,
+                "cantidad_comprada": 10,
+                "costo_compra": 2000,
+                "nuevo_stock": 10,
+                "nuevo_cpp": 2000
+            }
+        ]
+    },
+    {
+        "id": 2,
+        "empresa_id": 2,
+        "proveedor_id": 1,
+        "tipo_documento": "Factura",
+        "serie": "F001",
+        "numero": "000123",
+        "fecha": "2026-09-17",
+        "almacen_id": 1,
+        "subtotal": 20000,
+        "igv": 3600,
+        "total": 23600,
+        "detalles": [
+            {
+                "producto_id": 1,
+                "cantidad": 10,
+                "costo_unitario": 2000,
+                "subtotal": 20000
+            }
+        ],
+        "impacto_simulacion": [
+            {
+                "producto_id": 1,
+                "stock_anterior": 0,
+                "cpp_anterior": 0,
+                "cantidad_comprada": 10,
+                "costo_compra": 2000,
+                "nuevo_stock": 10,
+                "nuevo_cpp": 2000
+            }
+        ]
+    },
+    {
+        "id": 3,
+        "empresa_id": 1,
+        "proveedor_id": 1,
+        "tipo_documento": "Factura",
+        "serie": "F002",
+        "numero": "000124",
+        "fecha": "2026-09-17",
+        "almacen_id": 1,
+        "subtotal": 3500,
+        "igv": 630,
+        "total": 4130,
+        "detalles": [
+            {
+                "producto_id": 1,
+                "cantidad": 1,
+                "costo_unitario": 3500,
+                "subtotal": 3500
+            }
+        ],
+        "impacto_simulacion": [
+            {
+                "producto_id": 1,
+                "stock_anterior": 96,
+                "cpp_anterior": 3500,
+                "cantidad_comprada": 1,
+                "costo_compra": 3500,
+                "nuevo_stock": 97,
+                "nuevo_cpp": 3500
+            }
+        ]
+    }
+]

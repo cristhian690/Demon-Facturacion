@@ -1,0 +1,11 @@
+[
+    {
+        "id": 1,
+        "tipo_documento": "RUC",
+        "numero_documento": "20444444444",
+        "nombre": "Distribuidora Tech SAC",
+        "direccion": "Zona Industrial Mza A Lote 1, Callao",
+        "telefono": "01-555-1234",
+        "correo": "ventas@distribuidoratech.pe"
+    }
+]

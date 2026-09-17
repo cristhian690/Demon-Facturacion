@@ -1,0 +1,34 @@
+[
+    {
+        "producto_id": 1,
+        "almacen_id": 1,
+        "empresa_id": 1,
+        "stock_actual": 97,
+        "cpp": 3500,
+        "valor_inventario": 339500
+    },
+    {
+        "producto_id": 2,
+        "almacen_id": 1,
+        "empresa_id": 1,
+        "stock_actual": 50,
+        "cpp": 450,
+        "valor_inventario": 22500
+    },
+    {
+        "producto_id": 3,
+        "almacen_id": 1,
+        "empresa_id": 1,
+        "stock_actual": 10,
+        "cpp": 2000,
+        "valor_inventario": 20000
+    },
+    {
+        "producto_id": 1,
+        "almacen_id": 1,
+        "empresa_id": 2,
+        "stock_actual": 10,
+        "cpp": 2000,
+        "valor_inventario": 20000
+    }
+]

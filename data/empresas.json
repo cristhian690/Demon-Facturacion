@@ -1,0 +1,20 @@
+[
+    {
+        "id": 1,
+        "razon_social": "Empresa Demo S.A.C.",
+        "ruc": "20123456789",
+        "direccion": "Av. Principal 123, Lima",
+        "telefono": "01-123-4567",
+        "correo": "contacto@empresademo.com",
+        "logo": "logo-empresa-1.png"
+    },
+    {
+        "id": 2,
+        "razon_social": "Comercializadora Ejemplo EIRL",
+        "ruc": "10987654321",
+        "direccion": "Jr. Comercio 456, Arequipa",
+        "telefono": "054-987-654",
+        "correo": "ventas@comercializadora.pe",
+        "logo": "logo-empresa-2.png"
+    }
+]

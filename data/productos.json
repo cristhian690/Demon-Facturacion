@@ -1,0 +1,24 @@
+[
+    {
+        "id": 1,
+        "sku": "P001",
+        "nombre": "Laptop Pro 15",
+        "descripcion": "Laptop para desarrollo 16GB RAM",
+        "unidad_medida": "UN",
+        "categoria": "Equipos",
+        "marca": "TechBrand",
+        "stock_minimo": 5,
+        "estado": "Activo"
+    },
+    {
+        "id": 2,
+        "sku": "P002",
+        "nombre": "Monitor 24\"",
+        "descripcion": "Monitor LED Full HD",
+        "unidad_medida": "UN",
+        "categoria": "Periféricos",
+        "marca": "ViewScreen",
+        "stock_minimo": 10,
+        "estado": "Activo"
+    }
+]

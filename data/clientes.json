@@ -1,0 +1,20 @@
+[
+    {
+        "id": 1,
+        "tipo_documento": "RUC",
+        "numero_documento": "20555555555",
+        "nombre": "Cliente Corporativo S.A.",
+        "direccion": "Av. Los Negocios 789, San Isidro",
+        "telefono": "987654321",
+        "correo": "compras@clientecorporativo.com"
+    },
+    {
+        "id": 2,
+        "tipo_documento": "DNI",
+        "numero_documento": "76543210",
+        "nombre": "Juan Pérez",
+        "direccion": "Calle Las Flores 123, Miraflores",
+        "telefono": "999888777",
+        "correo": "juan.perez@email.com"
+    }
+]
