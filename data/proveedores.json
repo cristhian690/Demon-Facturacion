@@ -7,5 +7,27 @@
         "direccion": "Zona Industrial Mza A Lote 1, Callao",
         "telefono": "01-555-1234",
         "correo": "ventas@distribuidoratech.pe"
+    },
+    {
+        "nombre": "PRUEBA Proveedor E1",
+        "numero_documento": "PRUEBAP1",
+        "tipo_documento": "CE",
+        "direccion": "Dirección ficticia PRUEBA",
+        "telefono": "",
+        "correo": "",
+        "id": 2,
+        "empresa_id": 1,
+        "demo_key": "demo-v1-supplier"
+    },
+    {
+        "nombre": "PRUEBA Proveedor E2",
+        "numero_documento": "PRUEBAP2",
+        "tipo_documento": "CE",
+        "direccion": "Dirección ficticia PRUEBA",
+        "telefono": "",
+        "correo": "",
+        "id": 3,
+        "empresa_id": 2,
+        "demo_key": "demo-v1-supplier"
     }
 ]

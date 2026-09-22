@@ -14,6 +14,7 @@ if ($id) {
         }
     }
 }
+if ($id && !$producto) { http_response_code(404); exit('Registro no disponible en esta empresa.'); }
 $is_edit = $producto !== null;
 ?>
 <?php include '../../includes/header.php'; ?>
@@ -28,6 +29,7 @@ $is_edit = $producto !== null;
 <div class="card shadow mb-4">
     <div class="card-body">
         <form action="<?php echo url('actions/guardar_producto.php'); ?>" method="POST">
+            <?php echo form_context(); ?>
             <?php if ($is_edit): ?>
                 <input type="hidden" name="id" value="<?php echo $producto['id']; ?>">
             <?php endif; ?>

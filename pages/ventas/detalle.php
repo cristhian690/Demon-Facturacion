@@ -38,13 +38,14 @@ $getProdName = function($pid) use ($productos) {
 <?php include '../../includes/header.php'; ?>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="h3 text-gray-800">Simulación Visual: Impacto de la Venta</h2>
+    <h2 class="h3 text-gray-800">Detalle de la venta y sus entregas</h2>
     <a href="<?php echo url('pages/ventas/index.php'); ?>" class="btn btn-secondary">
         <i class="bi bi-arrow-left me-1"></i> Volver a Ventas
     </a>
 </div>
 
 <!-- Paso 1: Venta Registrada -->
+<?php include '../../includes/dispatch_panel.php'; ?>
 <div class="card shadow mb-4 border-left-warning">
     <div class="card-header py-3 bg-warning bg-opacity-75 text-dark">
         <h6 class="m-0 font-weight-bold"><i class="bi bi-1-circle"></i> VENTA REGISTRADA</h6>
@@ -65,6 +66,9 @@ $getProdName = function($pid) use ($productos) {
 </div>
 
 <!-- Flujo Visual -->
+<?php if (!empty($venta['impacto_simulacion'])): ?>
+<h3 class="h5 mt-4">Salida registrada al confirmar la venta</h3>
+<?php endif; ?>
 <div class="text-center my-3">
     <i class="bi bi-arrow-down fs-1 text-secondary"></i>
 </div>

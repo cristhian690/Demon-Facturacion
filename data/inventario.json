@@ -2,6 +2,30 @@
     {
         "producto_id": 1,
         "almacen_id": 1,
+        "empresa_id": 2,
+        "stock_actual": 10,
+        "cpp": 2000,
+        "valor_inventario": 20000
+    },
+    {
+        "producto_id": 6,
+        "almacen_id": 3,
+        "empresa_id": 2,
+        "stock_actual": 10,
+        "cpp": 100,
+        "valor_inventario": 1000
+    },
+    {
+        "producto_id": 7,
+        "almacen_id": 3,
+        "empresa_id": 2,
+        "stock_actual": 10,
+        "cpp": 50,
+        "valor_inventario": 500
+    },
+    {
+        "producto_id": 1,
+        "almacen_id": 1,
         "empresa_id": 1,
         "stock_actual": 97,
         "cpp": 3500,
@@ -24,11 +48,19 @@
         "valor_inventario": 20000
     },
     {
-        "producto_id": 1,
-        "almacen_id": 1,
-        "empresa_id": 2,
+        "producto_id": 4,
+        "almacen_id": 2,
+        "empresa_id": 1,
+        "stock_actual": 2,
+        "cpp": 100,
+        "valor_inventario": 200
+    },
+    {
+        "producto_id": 5,
+        "almacen_id": 2,
+        "empresa_id": 1,
         "stock_actual": 10,
-        "cpp": 2000,
-        "valor_inventario": 20000
+        "cpp": 50,
+        "valor_inventario": 500
     }
 ]

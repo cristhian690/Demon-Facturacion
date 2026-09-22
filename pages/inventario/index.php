@@ -51,7 +51,8 @@ $inventario_actual = array_filter($inventario, function($inv) {
                     <?php else: ?>
                         <?php foreach ($inventario_actual as $inv): 
                             $prod = $getProd($inv['producto_id']);
-                            if(!$prod) continue;
+                            $producto_disponible = $prod !== null;
+                            if (!$prod) $prod = ['id' => $inv['producto_id'], 'sku' => '#' . $inv['producto_id'], 'nombre' => 'Producto pendiente de asignación', 'unidad_medida' => ''];
                         ?>
                             <tr>
                                 <td>
@@ -71,9 +72,13 @@ $inventario_actual = array_filter($inventario, function($inv) {
                                     <?php echo format_money($inv['valor_inventario']); ?>
                                 </td>
                                 <td class="text-center">
+                                    <?php if ($producto_disponible): ?>
                                     <a href="<?php echo url('pages/inventario/kardex.php?producto_id=' . $prod['id']); ?>" class="btn btn-sm btn-outline-info" title="Ver Movimientos">
                                         <i class="bi bi-file-earmark-spreadsheet"></i>
                                     </a>
+                                    <?php else: ?>
+                                    <a href="<?php echo url('pages/inventario/kardex.php'); ?>" class="btn btn-sm btn-outline-info">Historial</a>
+                                    <?php endif; ?>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

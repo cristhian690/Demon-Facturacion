@@ -32,6 +32,96 @@
         ]
     },
     {
+        "id": 3,
+        "empresa_id": 1,
+        "proveedor_id": 1,
+        "tipo_documento": "Factura",
+        "serie": "F002",
+        "numero": "000124",
+        "fecha": "2026-09-17",
+        "almacen_id": 1,
+        "subtotal": 3500,
+        "igv": 630,
+        "total": 4130,
+        "detalles": [
+            {
+                "producto_id": 1,
+                "cantidad": 1,
+                "costo_unitario": 3500,
+                "subtotal": 3500
+            }
+        ],
+        "impacto_simulacion": [
+            {
+                "producto_id": 1,
+                "stock_anterior": 96,
+                "cpp_anterior": 3500,
+                "cantidad_comprada": 1,
+                "costo_compra": 3500,
+                "nuevo_stock": 97,
+                "nuevo_cpp": 3500
+            }
+        ]
+    },
+    {
+        "id": 4,
+        "empresa_id": 1,
+        "proveedor_id": 2,
+        "almacen_id": 2,
+        "request_id": "fee587adeac198ae1ac3e54f1ad27de7",
+        "detalles": [
+            {
+                "producto_id": 4,
+                "cantidad": 10,
+                "subtotal": 1000,
+                "descuento": 0,
+                "costo_unitario": 100
+            },
+            {
+                "producto_id": 5,
+                "cantidad": 10,
+                "subtotal": 500,
+                "descuento": 0,
+                "costo_unitario": 50
+            }
+        ],
+        "tipo_documento": "Factura",
+        "serie": "PRUEBA",
+        "numero": "INICIAL-E1",
+        "fecha": "2026-09-18",
+        "subtotal": 1500,
+        "igv": 270,
+        "total": 1770,
+        "impacto_simulacion": [
+            {
+                "producto_id": 4,
+                "stock_anterior": 0,
+                "cpp_anterior": 0,
+                "cpp_vigente": 0,
+                "cantidad_vendida": 10,
+                "cantidad_comprada": 10,
+                "precio_venta": 100,
+                "costo_compra": 100,
+                "nuevo_stock": 10,
+                "nuevo_cpp": 100,
+                "costo_venta_linea": 1000
+            },
+            {
+                "producto_id": 5,
+                "stock_anterior": 0,
+                "cpp_anterior": 0,
+                "cpp_vigente": 0,
+                "cantidad_vendida": 10,
+                "cantidad_comprada": 10,
+                "precio_venta": 50,
+                "costo_compra": 50,
+                "nuevo_stock": 10,
+                "nuevo_cpp": 50,
+                "costo_venta_linea": 500
+            }
+        ]
+    },
+    {
         "id": 2,
         "empresa_id": 2,
         "proveedor_id": 1,
@@ -64,34 +154,60 @@
         ]
     },
     {
-        "id": 3,
-        "empresa_id": 1,
-        "proveedor_id": 1,
-        "tipo_documento": "Factura",
-        "serie": "F002",
-        "numero": "000124",
-        "fecha": "2026-09-17",
-        "almacen_id": 1,
-        "subtotal": 3500,
-        "igv": 630,
-        "total": 4130,
+        "id": 5,
+        "empresa_id": 2,
+        "proveedor_id": 3,
+        "almacen_id": 3,
+        "request_id": "c7c8135a4e3de1c3d87accd8a54813ec",
         "detalles": [
             {
-                "producto_id": 1,
-                "cantidad": 1,
-                "costo_unitario": 3500,
-                "subtotal": 3500
+                "producto_id": 6,
+                "cantidad": 10,
+                "subtotal": 1000,
+                "descuento": 0,
+                "costo_unitario": 100
+            },
+            {
+                "producto_id": 7,
+                "cantidad": 10,
+                "subtotal": 500,
+                "descuento": 0,
+                "costo_unitario": 50
             }
         ],
+        "tipo_documento": "Factura",
+        "serie": "PRUEBA",
+        "numero": "INICIAL-E2",
+        "fecha": "2026-09-18",
+        "subtotal": 1500,
+        "igv": 270,
+        "total": 1770,
         "impacto_simulacion": [
             {
-                "producto_id": 1,
-                "stock_anterior": 96,
-                "cpp_anterior": 3500,
-                "cantidad_comprada": 1,
-                "costo_compra": 3500,
-                "nuevo_stock": 97,
-                "nuevo_cpp": 3500
+                "producto_id": 6,
+                "stock_anterior": 0,
+                "cpp_anterior": 0,
+                "cpp_vigente": 0,
+                "cantidad_vendida": 10,
+                "cantidad_comprada": 10,
+                "precio_venta": 100,
+                "costo_compra": 100,
+                "nuevo_stock": 10,
+                "nuevo_cpp": 100,
+                "costo_venta_linea": 1000
+            },
+            {
+                "producto_id": 7,
+                "stock_anterior": 0,
+                "cpp_anterior": 0,
+                "cpp_vigente": 0,
+                "cantidad_vendida": 10,
+                "cantidad_comprada": 10,
+                "precio_venta": 50,
+                "costo_compra": 50,
+                "nuevo_stock": 10,
+                "nuevo_cpp": 50,
+                "costo_venta_linea": 500
             }
         ]
     }

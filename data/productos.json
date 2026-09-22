@@ -20,5 +20,57 @@
         "marca": "ViewScreen",
         "stock_minimo": 10,
         "estado": "Activo"
+    },
+    {
+        "nombre": "PRUEBA Producto 1 E1",
+        "sku": "PRUEBA-E1-P1",
+        "descripcion": "Producto ficticio para compras, ventas y Kardex.",
+        "categoria": "PRUEBA",
+        "marca": "PRUEBA",
+        "unidad_medida": "UN",
+        "stock_minimo": 0,
+        "estado": "Activo",
+        "id": 4,
+        "empresa_id": 1,
+        "demo_key": "demo-v1-product-1"
+    },
+    {
+        "nombre": "PRUEBA Producto 2 E1",
+        "sku": "PRUEBA-E1-P2",
+        "descripcion": "Producto ficticio para compras, ventas y Kardex.",
+        "categoria": "PRUEBA",
+        "marca": "PRUEBA",
+        "unidad_medida": "UN",
+        "stock_minimo": 0,
+        "estado": "Activo",
+        "id": 5,
+        "empresa_id": 1,
+        "demo_key": "demo-v1-product-2"
+    },
+    {
+        "nombre": "PRUEBA Producto 1 E2",
+        "sku": "PRUEBA-E2-P1",
+        "descripcion": "Producto ficticio para compras, ventas y Kardex.",
+        "categoria": "PRUEBA",
+        "marca": "PRUEBA",
+        "unidad_medida": "UN",
+        "stock_minimo": 0,
+        "estado": "Activo",
+        "id": 6,
+        "empresa_id": 2,
+        "demo_key": "demo-v1-product-1"
+    },
+    {
+        "nombre": "PRUEBA Producto 2 E2",
+        "sku": "PRUEBA-E2-P2",
+        "descripcion": "Producto ficticio para compras, ventas y Kardex.",
+        "categoria": "PRUEBA",
+        "marca": "PRUEBA",
+        "unidad_medida": "UN",
+        "stock_minimo": 0,
+        "estado": "Activo",
+        "id": 7,
+        "empresa_id": 2,
+        "demo_key": "demo-v1-product-2"
     }
 ]

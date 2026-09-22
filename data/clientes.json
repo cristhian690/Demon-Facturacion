@@ -16,5 +16,27 @@
         "direccion": "Calle Las Flores 123, Miraflores",
         "telefono": "999888777",
         "correo": "juan.perez@email.com"
+    },
+    {
+        "nombre": "PRUEBA Cliente E1",
+        "numero_documento": "PRUEBAC1",
+        "tipo_documento": "CE",
+        "direccion": "Dirección ficticia PRUEBA",
+        "telefono": "",
+        "correo": "",
+        "id": 3,
+        "empresa_id": 1,
+        "demo_key": "demo-v1-client"
+    },
+    {
+        "nombre": "PRUEBA Cliente E2",
+        "numero_documento": "PRUEBAC2",
+        "tipo_documento": "CE",
+        "direccion": "Dirección ficticia PRUEBA",
+        "telefono": "",
+        "correo": "",
+        "id": 4,
+        "empresa_id": 2,
+        "demo_key": "demo-v1-client"
     }
 ]

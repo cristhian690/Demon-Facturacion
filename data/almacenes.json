@@ -4,5 +4,21 @@
         "nombre": "Almacén Principal",
         "ubicacion": "Sede Central",
         "estado": "Activo"
+    },
+    {
+        "nombre": "PRUEBA Almacén E1",
+        "ubicacion": "Ubicación ficticia PRUEBA",
+        "estado": "Activo",
+        "id": 2,
+        "empresa_id": 1,
+        "demo_key": "demo-v1-warehouse"
+    },
+    {
+        "nombre": "PRUEBA Almacén E2",
+        "ubicacion": "Ubicación ficticia PRUEBA",
+        "estado": "Activo",
+        "id": 3,
+        "empresa_id": 2,
+        "demo_key": "demo-v1-warehouse"
     }
 ]

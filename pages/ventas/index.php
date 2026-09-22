@@ -1,6 +1,7 @@
 <?php
 require_once '../../config.php';
 require_once '../../includes/helpers.php';
+require_once '../../includes/dispatches.php';
 
 $ventas = get_data('ventas');
 $clientes = get_data('clientes');
@@ -35,6 +36,7 @@ $getCliente = function($id) use ($clientes) {
                         <th width="150">Documento</th>
                         <th>Cliente</th>
                         <th>Almacén Origen</th>
+                        <th>Entrega</th>
                         <th class="text-end">Total (Ingreso)</th>
                         <th class="text-end">Costo de Ventas</th>
                         <th width="100">Acciones</th>
@@ -42,7 +44,7 @@ $getCliente = function($id) use ($clientes) {
                 </thead>
                 <tbody>
                     <?php if (empty($ventas)): ?>
-                        <tr><td colspan="7" class="text-center">No hay ventas registradas</td></tr>
+                        <tr><td colspan="8" class="text-center">No hay ventas registradas</td></tr>
                     <?php else: ?>
                         <?php 
                         // Ordenar por fecha descendente
@@ -60,6 +62,7 @@ $getCliente = function($id) use ($clientes) {
                                 </td>
                                 <td class="fw-bold"><?php echo htmlspecialchars($getCliente($venta['cliente_id'])); ?></td>
                                 <td>Almacén <?php echo $venta['almacen_id']; ?></td>
+                                <td><?php echo htmlspecialchars(dispatch_status($venta)); ?></td>
                                 <td class="text-end fw-bold text-success"><?php echo format_money($venta['total']); ?></td>
                                 <td class="text-end text-danger"><?php echo format_money($venta['costo_ventas_total'] ?? 0); ?></td>
                                 <td>

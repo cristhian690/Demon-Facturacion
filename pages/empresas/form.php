@@ -14,6 +14,10 @@ if ($id) {
         }
     }
 }
+if ($id !== null && (!is_string($id) || !ctype_digit($id) || !$empresa)) {
+    http_response_code(404);
+    exit('Empresa no disponible.');
+}
 $is_edit = $empresa !== null;
 ?>
 <?php include '../../includes/header.php'; ?>
@@ -28,6 +32,7 @@ $is_edit = $empresa !== null;
 <div class="card shadow mb-4">
     <div class="card-body">
         <form action="<?php echo url('actions/guardar_empresa.php'); ?>" method="POST">
+            <?php echo form_context(); ?>
             <?php if ($is_edit): ?>
                 <input type="hidden" name="id" value="<?php echo $empresa['id']; ?>">
             <?php endif; ?>
@@ -40,7 +45,7 @@ $is_edit = $empresa !== null;
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">RUC <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" name="ruc" required 
+                    <input type="text" class="form-control" name="ruc" required pattern="[0-9]{11}" maxlength="11" inputmode="numeric" title="Ingresa 11 dígitos"
                            value="<?php echo $is_edit ? htmlspecialchars($empresa['ruc']) : ''; ?>">
                 </div>
             </div>

@@ -24,7 +24,7 @@ if (!$venta) {
     die("Venta no encontrada.");
 }
 
-$cliente = null;
+$cliente = ['nombre' => 'Cliente sin asignación disponible', 'tipo_documento' => 'Documento', 'numero_documento' => '-'];
 foreach ($clientes as $c) {
     if ($c['id'] == $venta['cliente_id']) { $cliente = $c; break; }
 }

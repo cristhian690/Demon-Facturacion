@@ -1,0 +1,3 @@
+Options -Indexes
+RewriteEngine On
+RewriteRule ^(?:data|includes|tests|\.git)(?:/|$) - [F,L,NC]

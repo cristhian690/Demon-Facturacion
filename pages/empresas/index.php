@@ -14,6 +14,19 @@ $empresas = get_data('empresas');
 </div>
 
 <div class="card shadow mb-4">
+    <div class="card-body">
+        <h3 class="h5">Datos de demostración</h3>
+        <p>Crea un cliente, un proveedor, un almacén y dos productos PRUEBA por empresa. Registra una compra inicial de 10 unidades por producto (costos sin IGV: S/ 100 y S/ 50). No modifica registros anteriores ni repone stock al repetir la carga.</p>
+        <form id="formDemo" action="<?php echo url('actions/cargar_demo.php'); ?>" method="POST">
+            <?php echo form_context(); ?>
+            <button type="submit" class="btn btn-outline-primary">Cargar datos PRUEBA en todas las empresas</button>
+        </form>
+        <div id="demoResult" class="d-none" role="status" aria-live="polite"></div>
+    </div>
+</div>
+<script src="<?php echo url('assets/js/demo.js'); ?>" defer></script>
+
+<div class="card shadow mb-4">
     <div class="card-header py-3 d-flex justify-content-between align-items-center">
         <h6 class="m-0 font-weight-bold text-primary">Listado de Empresas</h6>
         <div class="input-group input-group-sm" style="width: 250px;">

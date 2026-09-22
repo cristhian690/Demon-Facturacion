@@ -8,5 +8,6 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Custom App JS -->
     <script src="<?php echo url('assets/js/app.js'); ?>"></script>
+<script src="<?php echo url('assets/js/forms.js'); ?>"></script>
 </body>
 </html>

@@ -1,24 +1,13 @@
 <?php
 require_once '../../config.php';
 require_once '../../includes/helpers.php';
+require_once '../../includes/quantities.php';
 
 $clientes = get_data('clientes');
 $productos = get_data('productos');
 $almacenes = get_data('almacenes');
 ?>
 <?php include '../../includes/header.php'; ?>
-
-<!-- BANNER SOLICITADO EN PROMPT.MD -->
-<div class="alert alert-warning border-warning shadow-sm mb-4" role="alert">
-    <div class="d-flex align-items-center">
-        <i class="bi bi-exclamation-triangle-fill fs-3 text-warning me-3"></i>
-        <div>
-            <h5 class="alert-heading fw-bold mb-1">PENDIENTE DE CONFIRMAR CON EL ADMINISTRADOR:</h5>
-            <p class="mb-0">¿La salida de inventario ocurre automáticamente al confirmar la venta o existe previamente/después un proceso independiente de despacho? <br>
-            <em>Para efectos de este prototipo, se utilizará el flujo mínimo: <strong>Venta → Salida Automática → Kardex</strong>.</em></p>
-        </div>
-    </div>
-</div>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="h3 text-gray-800">Registrar Nueva Venta</h2>
@@ -28,6 +17,16 @@ $almacenes = get_data('almacenes');
 </div>
 
 <form action="<?php echo url('actions/procesar_venta.php'); ?>" method="POST" id="formVenta">
+    <?php echo form_context(); ?>
+    <div class="alert alert-danger d-none form-errors" role="alert"></div>
+    <div class="card card-body mb-3">
+        <label for="deliveryMode" class="form-label">Entrega de mercadería</label>
+        <select id="deliveryMode" name="entrega" class="form-select">
+            <option value="inmediata">Entregar todo al confirmar (descuenta stock)</option>
+            <option value="pendiente">Dejar entrega pendiente (sin descontar stock)</option>
+        </select>
+        <small class="text-muted mt-2">Una entrega pendiente no reserva existencias. El stock se valida en cada despacho desde el detalle de la venta.</small>
+    </div>
     
     <!-- Cabecera de la Venta -->
     <div class="card shadow mb-4 border-top-warning">
@@ -44,6 +43,7 @@ $almacenes = get_data('almacenes');
                             <option value="<?php echo $c['id']; ?>"><?php echo htmlspecialchars($c['nombre'] . ' (' . $c['numero_documento'] . ')'); ?></option>
                         <?php endforeach; ?>
                     </select>
+                    <a class="btn btn-sm btn-outline-primary mt-2" data-select-target="cliente_id" href="<?php echo url('pages/clientes/form.php'); ?>">Agregar cliente</a>
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">Tipo Doc. <span class="text-danger">*</span></label>
@@ -108,7 +108,7 @@ $almacenes = get_data('almacenes');
                                 <select class="form-select producto-select" name="productos[]" required>
                                     <option value="">Seleccionar...</option>
                                     <?php foreach($productos as $prod): ?>
-                                        <option value="<?php echo $prod['id']; ?>"><?php echo htmlspecialchars($prod['sku'] . ' - ' . $prod['nombre']); ?></option>
+                                        <option data-unit="<?php echo htmlspecialchars($prod['unidad_medida'] ?? 'UN'); ?>" data-step="<?php echo quantity_step($prod['unidad_medida'] ?? 'UN'); ?>" value="<?php echo $prod['id']; ?>"><?php echo htmlspecialchars($prod['sku'] . ' - ' . $prod['nombre']); ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </td>
@@ -147,6 +147,7 @@ $almacenes = get_data('almacenes');
         </div>
     </div>
     
+    <div class="alert alert-info dispatch-preview" aria-live="polite">Selecciona producto y almacén para consultar el stock.</div>
     <div class="d-flex justify-content-end mb-5">
         <button type="submit" class="btn btn-warning btn-lg fw-bold" id="btnConfirmarVenta">
             <i class="bi bi-check-circle me-2"></i> Confirmar Venta
@@ -162,7 +163,7 @@ $almacenes = get_data('almacenes');
             <select class="form-select producto-select" name="productos[]" required>
                 <option value="">Seleccionar...</option>
                 <?php foreach($productos as $prod): ?>
-                    <option value="<?php echo $prod['id']; ?>"><?php echo htmlspecialchars($prod['sku'] . ' - ' . $prod['nombre']); ?></option>
+                    <option data-unit="<?php echo htmlspecialchars($prod['unidad_medida'] ?? 'UN'); ?>" data-step="<?php echo quantity_step($prod['unidad_medida'] ?? 'UN'); ?>" value="<?php echo $prod['id']; ?>"><?php echo htmlspecialchars($prod['sku'] . ' - ' . $prod['nombre']); ?></option>
                 <?php endforeach; ?>
             </select>
         </td>
@@ -183,12 +184,18 @@ document.addEventListener('DOMContentLoaded', function() {
     const tbody = document.querySelector('#tablaDetalle tbody');
     const template = document.querySelector('#templateFila tbody').innerHTML;
     const selectAlmacen = document.getElementById('selectAlmacen');
+    const form = document.getElementById('formVenta');
+    const delivery = document.getElementById('deliveryMode');
+    form.dataset.requiresStock = 'true';
+    const preview = form.querySelector('.dispatch-preview');
     
     function calcularTotales() {
         let subtotalGlobal = 0;
         let valid = true;
         
         const filas = tbody.querySelectorAll('tr');
+        const cantidades = {};
+        filas.forEach(f => { const id = f.querySelector('.producto-select').value; cantidades[id] = (cantidades[id] || 0) + Number(f.querySelector('.txt-cantidad').value); });
         filas.forEach(fila => {
             const cantInput = fila.querySelector('.txt-cantidad');
             const cant = parseFloat(cantInput.value) || 0;
@@ -197,7 +204,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const stockActual = parseFloat(fila.querySelector('.hidden-stock').value) || 0;
             
             // Validar stock visualmente
-            if (cant > stockActual && fila.querySelector('.producto-select').value !== "") {
+            const selected = fila.querySelector('.producto-select').value;
+            const missingStock = fila.querySelector('.hidden-stock').dataset.ready !== 'true';
+            if (delivery.value === 'inmediata' && selected !== '' && (missingStock || Math.round(cantidades[selected] * 1000) > Math.round(stockActual * 1000))) {
                 cantInput.classList.add('is-invalid');
                 valid = false;
             } else {
@@ -209,7 +218,7 @@ document.addEventListener('DOMContentLoaded', function() {
             let subtotalFila = bruto - descuentoMoneda;
             
             fila.querySelector('.txt-subtotal').value = subtotalFila.toFixed(2);
-            subtotalGlobal += subtotalFila;
+            subtotalGlobal += Number(subtotalFila.toFixed(2));
         });
         
         const igv = subtotalGlobal * 0.18;
@@ -219,7 +228,22 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('res_igv').value = igv.toFixed(2);
         document.getElementById('res_total').value = total.toFixed(2);
         
-        document.getElementById('btnConfirmarVenta').disabled = !valid;
+        const messages = [];
+        const seen = new Set();
+        filas.forEach(fila => {
+            const option = fila.querySelector('.producto-select').selectedOptions[0];
+            if (!option?.value || seen.has(option.value)) return;
+            seen.add(option.value);
+            const stockInput = fila.querySelector('.hidden-stock');
+            const qty = Number(cantidades[option.value].toFixed(3));
+            const remaining = Number((Number(stockInput.value) - qty).toFixed(3));
+            messages.push(delivery.value === 'pendiente'
+                ? `${option.textContent}: facturarás ${qty} ${option.dataset.unit}; saldrán 0 ahora. Entrega pendiente.`
+                : `${option.textContent}: saldrán ${qty} ${option.dataset.unit}; quedarán ${stockInput.dataset.ready === 'true' ? remaining : 'por consultar'}.`);
+        });
+        preview.textContent = messages.join(' ') || 'Selecciona producto y almacén para consultar el stock.';
+        form.dataset.stockValid = String(valid && messages.length > 0);
+        document.getElementById('btnConfirmarVenta').disabled = !valid || form.dataset.processing === 'true';
     }
     
     async function actualizarStockFila(fila) {
@@ -227,22 +251,29 @@ document.addEventListener('DOMContentLoaded', function() {
         const almId = selectAlmacen.value;
         const lblStock = fila.querySelector('.lbl-stock');
         const hiddenStock = fila.querySelector('.hidden-stock');
+        hiddenStock.dataset.ready = 'false';
         
         if (!prodId || !almId) {
             lblStock.textContent = '---';
             lblStock.className = 'badge bg-secondary lbl-stock';
             hiddenStock.value = 0;
+            calcularTotales();
             return;
         }
         
+        hiddenStock.value = 0;
+        calcularTotales();
         lblStock.textContent = 'Buscando...';
         
         try {
-            const response = await fetch(`<?php echo url('actions/api_stock.php'); ?>?producto_id=${prodId}&almacen_id=${almId}`);
+            const response = await fetch(`<?php echo url('actions/api_stock.php'); ?>?producto_id=${prodId}&almacen_id=${almId}&empresa_id=${form.elements.empresa_id.value}`);
             const data = await response.json();
+            if (prodId !== fila.querySelector('.producto-select').value || almId !== selectAlmacen.value) return;
+            if (!response.ok || data.error) throw new Error(data.error || 'No se pudo consultar stock');
             
             hiddenStock.value = data.stock;
-            lblStock.textContent = data.stock + ' UN';
+            hiddenStock.dataset.ready = 'true';
+            lblStock.textContent = data.stock + ' ' + data.unidad_medida;
             
             if (data.stock <= 0) {
                 lblStock.className = 'badge bg-danger lbl-stock';
@@ -257,6 +288,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Al cambiar de almacén, actualizar el stock de todas las filas
+    delivery.addEventListener('change', calcularTotales);
     selectAlmacen.addEventListener('change', function() {
         const filas = tbody.querySelectorAll('tr');
         filas.forEach(fila => actualizarStockFila(fila));
@@ -280,6 +312,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Agregar fila
     document.getElementById('btnAgregarFila').addEventListener('click', function() {
         tbody.insertAdjacentHTML('beforeend', template);
+        calcularTotales();
     });
     
     // Eliminar fila
@@ -297,4 +330,5 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
+<script src="<?php echo url('assets/js/quantities.js'); ?>" defer></script>
 <?php include '../../includes/footer.php'; ?>

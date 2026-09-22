@@ -34,5 +34,46 @@
                 "costo_venta_linea": 14000
             }
         ]
+    },
+    {
+        "id": 2,
+        "empresa_id": 1,
+        "cliente_id": 3,
+        "almacen_id": 2,
+        "request_id": "3d9c49a305cc38ea9087a460accb0bff",
+        "detalles": [
+            {
+                "producto_id": 4,
+                "cantidad": 8,
+                "subtotal": 8,
+                "descuento": 0,
+                "precio_unitario": 1,
+                "costo_venta_unitario": 100,
+                "costo_venta_total": 800
+            }
+        ],
+        "tipo_documento": "Factura",
+        "serie": "F001",
+        "numero": "000421",
+        "fecha": "2026-09-18",
+        "subtotal": 8,
+        "igv": 1.44,
+        "total": 9.44,
+        "impacto_simulacion": [
+            {
+                "producto_id": 4,
+                "stock_anterior": 10,
+                "cpp_anterior": 100,
+                "cpp_vigente": 100,
+                "cantidad_vendida": 8,
+                "cantidad_comprada": 8,
+                "precio_venta": 1,
+                "costo_compra": 100,
+                "nuevo_stock": 2,
+                "nuevo_cpp": 100,
+                "costo_venta_linea": 800
+            }
+        ],
+        "costo_ventas_total": 800
     }
 ]

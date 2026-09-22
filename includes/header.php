@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="empresa-id" content="<?php echo (int)($_SESSION['empresa_id'] ?? 0); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Gestión Empresarial (Prototipo)</title>
     <!-- Bootstrap 5 CSS CDN (para simplificar en este paso, luego se puede mover a local) -->
@@ -73,3 +74,13 @@
             
             <!-- Main Content Area -->
             <div class="container-fluid p-4">
+                <?php
+                $pending_assignment = false;
+                foreach (['clientes', 'proveedores', 'productos', 'almacenes'] as $catalog_name) {
+                    foreach (read_data($catalog_name) as $catalog_row) {
+                        if (empty($catalog_row['empresa_id'])) { $pending_assignment = true; break 2; }
+                    }
+                }
+                if ($pending_assignment): ?>
+                <div class="alert alert-warning" role="status">Hay registros anteriores pendientes de asignación a una empresa. Se conservaron y no se muestran hasta confirmar a quién pertenecen.</div>
+                <?php endif; ?>
