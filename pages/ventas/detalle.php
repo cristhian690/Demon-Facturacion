@@ -1,6 +1,8 @@
 <?php
 require_once '../../config.php';
 require_once '../../includes/helpers.php';
+require_once '../../includes/returns.php';
+require_once '../../includes/finance.php';
 
 $id = $_GET['id'] ?? null;
 if (!$id) {
@@ -165,4 +167,5 @@ $getProdName = function($pid) use ($productos) {
     </a>
 </div>
 
+<?php include '../../includes/sale_finance_panel.php'; ?>
 <?php include '../../includes/footer.php'; ?>

@@ -13,10 +13,11 @@ $empresas = get_data('empresas');
     </a>
 </div>
 
+<?php if (ENABLE_DEMO_TOOLS): ?>
 <div class="card shadow mb-4">
     <div class="card-body">
         <h3 class="h5">Datos de demostración</h3>
-        <p>Crea un cliente, un proveedor, un almacén y dos productos PRUEBA por empresa. Registra una compra inicial de 10 unidades por producto (costos sin IGV: S/ 100 y S/ 50). No modifica registros anteriores ni repone stock al repetir la carga.</p>
+        <p>Crea un cliente, un proveedor, un almacén y dos productos PRUEBA por empresa. Registra una compra inicial de 10 unidades por producto (costos sin IGV: S/ 100 y S/ 50). La carga es idempotente y no repone el stock al repetirla.</p>
         <form id="formDemo" action="<?php echo url('actions/cargar_demo.php'); ?>" method="POST">
             <?php echo form_context(); ?>
             <button type="submit" class="btn btn-outline-primary">Cargar datos PRUEBA en todas las empresas</button>
@@ -25,6 +26,7 @@ $empresas = get_data('empresas');
     </div>
 </div>
 <script src="<?php echo url('assets/js/demo.js'); ?>" defer></script>
+<?php endif; ?>
 
 <div class="card shadow mb-4">
     <div class="card-header py-3 d-flex justify-content-between align-items-center">

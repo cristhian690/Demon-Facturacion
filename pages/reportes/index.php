@@ -1,15 +1,10 @@
-﻿<?php
-require_once '../../config.php';
-require_once '../../includes/helpers.php';
-?>
-<?php include '../../includes/header.php'; ?>
-
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="h3 text-gray-800">Módulo en construcción</h2>
-</div>
-
-<div class="alert alert-info">
-    <i class="bi bi-info-circle me-2"></i> Esta sección (<strong><?php echo basename(dirname($_SERVER['PHP_SELF'])); ?></strong>) forma parte de la estructura base pero su funcionalidad detallada se implementará en las siguientes fases según lo definido en el análisis.
-</div>
-
+<?php
+require_once '../../config.php'; require_once '../../includes/helpers.php'; require_once '../../includes/finance.php';
+$from=$_GET['desde']??date('Y-m-01'); $to=$_GET['hasta']??date('Y-m-d'); if(!valid_date($from)||!valid_date($to)||$from>$to){$from=date('Y-m-01');$to=date('Y-m-d');}
+$sales=array_values(array_filter(get_data('ventas'),fn($v)=>$v['fecha']>=$from&&$v['fecha']<=$to)); $purchases=array_values(array_filter(get_data('compras'),fn($v)=>$v['fecha']>=$from&&$v['fecha']<=$to));
+$billing=$collections=$cost=$receivable=0; foreach($sales as $sale){$f=sale_financials($sale);$billing+=$f['cargo'];$receivable+=$f['saldo'];$cost+=(float)($sale['costo_ventas_total']??0)-(float)($sale['costo_devoluciones_total']??0);} foreach(get_data('pagos') as $p)if($p['fecha']>=$from&&$p['fecha']<=$to)$collections+=(float)$p['importe']; $buyTotal=array_sum(array_column($purchases,'total'));
+include '../../includes/header.php'; ?>
+<div class="d-flex justify-content-between align-items-center mb-4"><div><h1 class="h3 mb-1">Reportes</h1><p class="text-muted mb-0">Facturación y compras usan fecha de documento; cobros usan fecha de pago. El costo corresponde a lo despachado.</p></div><a class="btn btn-outline-success" href="<?php echo url('actions/exportar_csv.php?reporte=ventas&desde='.$from.'&hasta='.$to); ?>">Exportar ventas CSV</a></div>
+<form class="card card-body mb-4 row g-3 flex-row" method="get"><div class="col-md-4"><label class="form-label">Desde (incluido)</label><input class="form-control" type="date" name="desde" value="<?php echo $from; ?>"></div><div class="col-md-4"><label class="form-label">Hasta (incluido)</label><input class="form-control" type="date" name="hasta" value="<?php echo $to; ?>"></div><div class="col-md-4 d-flex align-items-end"><button class="btn btn-primary">Aplicar fechas</button></div></form>
+<div class="row g-3"><?php foreach([['Facturación vigente',$billing,'ventas'],['Cobros recibidos',$collections,'cuentas_cobrar'],['Saldo por cobrar actual',$receivable,'cuentas_cobrar'],['Costo despachado',$cost,'inventario/kardex'],['Compras',$buyTotal,'compras']] as [$label,$value,$path]): ?><div class="col-md-4"><a class="card card-body text-decoration-none h-100" href="<?php echo url('pages/'.$path.'/index.php'); ?>"><span class="text-muted"><?php echo $label; ?></span><strong class="fs-4 text-dark"><?php echo format_money($value); ?></strong></a></div><?php endforeach; ?></div>
 <?php include '../../includes/footer.php'; ?>

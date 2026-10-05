@@ -1,15 +1,2 @@
-﻿<?php
-require_once '../../config.php';
-require_once '../../includes/helpers.php';
-?>
-<?php include '../../includes/header.php'; ?>
-
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="h3 text-gray-800">Módulo en construcción</h2>
-</div>
-
-<div class="alert alert-info">
-    <i class="bi bi-info-circle me-2"></i> Esta sección (<strong><?php echo basename(dirname($_SERVER['PHP_SELF'])); ?></strong>) forma parte de la estructura base pero su funcionalidad detallada se implementará en las siguientes fases según lo definido en el análisis.
-</div>
-
-<?php include '../../includes/footer.php'; ?>
+<?php require_once '../../config.php'; require_once '../../includes/helpers.php'; $rows=array_reverse(get_data('auditoria')); include '../../includes/header.php'; ?>
+<div class="page-heading mb-4"><span class="page-eyebrow">Trazabilidad</span><h1 class="h3 mb-1">Historial de acciones</h1><p class="text-muted mb-0">Consulta las operaciones realizadas dentro de la empresa activa.</p></div><div class="card"><div class="table-responsive"><table class="table"><thead><tr><th>Fecha</th><th>Acción</th><th>Entidad</th><th>Detalle</th><th>Autor</th></tr></thead><tbody><?php if(!$rows): ?><tr><td colspan="5" class="text-center py-5">Aún no hay acciones registradas.</td></tr><?php endif; ?><?php foreach($rows as $r): ?><tr><td><?php echo htmlspecialchars($r['fecha']); ?></td><td><?php echo htmlspecialchars($r['accion']); ?></td><td><?php echo htmlspecialchars($r['entidad'].' #'.$r['entidad_id']); ?></td><td><?php echo htmlspecialchars($r['detalle']); ?></td><td><?php echo htmlspecialchars($r['autor']); ?></td></tr><?php endforeach; ?></tbody></table></div></div><?php include '../../includes/footer.php'; ?>

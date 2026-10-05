@@ -15,6 +15,7 @@ function dispatch_status($sale) {
 function process_dispatch($input) {
     validate_context($input);
     $sale = owned_record('ventas', $input['venta_id'] ?? '');
+    if (($sale['estado_documento'] ?? 'Vigente') === 'Anulada') throw new InvalidArgumentException('La venta está anulada; no admite nuevos despachos.');
     $request = input_text($input, 'request_id', true);
     if (!preg_match('/^[a-f0-9]{32}$/D', $request)) throw new InvalidArgumentException('Identificador de formulario inválido.');
     $response = ['redirect'=>url('pages/ventas/detalle.php?id=' . $sale['id']), 'message'=>'Despacho registrado.'];

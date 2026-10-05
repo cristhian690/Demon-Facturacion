@@ -108,8 +108,8 @@ $getProd = function($pid) use ($productos) {
                 <p class="mb-0 text-muted">Soluciones empresariales integrales</p>
                 <div class="mt-3">
                     <strong>Dirección:</strong> <?php echo htmlspecialchars($empresa['direccion'] ?? 'Av. Principal 123, Ciudad'); ?><br>
-                    <strong>Email:</strong> <?php echo htmlspecialchars($empresa['email'] ?? 'contacto@empresa.com'); ?><br>
-                    <strong>Teléfono:</strong> <?php echo htmlspecialchars($empresa['telefono'] ?? '999-888-777'); ?>
+                    <strong>Correo:</strong> <?php echo htmlspecialchars($empresa['correo'] ?? '-'); ?><br>
+                    <strong>Teléfono:</strong> <?php echo htmlspecialchars($empresa['telefono'] ?? '-'); ?>
                 </div>
             </div>
             <div class="col-5">
@@ -133,10 +133,19 @@ $getProd = function($pid) use ($productos) {
                 </div>
                 <div class="col-4">
                     <strong>Fecha de Emisión:</strong> <?php echo date('d/m/Y', strtotime($venta['fecha'])); ?><br>
-                    <strong>Moneda:</strong> SOLES (PEN)
+                    <strong>Vencimiento:</strong> <?php echo !empty($venta['fecha_vencimiento']) ? date('d/m/Y', strtotime($venta['fecha_vencimiento'])) : 'Contado'; ?><br>
+                    <strong>Moneda:</strong> <?php echo htmlspecialchars($venta['moneda'] ?? 'PEN'); ?><br>
+                    <strong>Condición:</strong> <?php echo htmlspecialchars(ucfirst($venta['condicion_pago'] ?? 'contado')); ?>
                 </div>
             </div>
         </div>
+
+        <?php if (!empty($venta['orden_compra']) || !empty($venta['observacion'])): ?>
+        <div class="border rounded p-3 mb-4">
+            <?php if (!empty($venta['orden_compra'])): ?><strong>Orden de compra:</strong> <?php echo htmlspecialchars($venta['orden_compra']); ?><br><?php endif; ?>
+            <?php if (!empty($venta['observacion'])): ?><strong>Observación:</strong> <?php echo nl2br(htmlspecialchars($venta['observacion'])); ?><?php endif; ?>
+        </div>
+        <?php endif; ?>
         
         <!-- Detalles -->
         <table class="table table-items mb-4">
@@ -157,7 +166,7 @@ $getProd = function($pid) use ($productos) {
                     <tr>
                         <td class="text-center"><?php echo htmlspecialchars($prod['sku']); ?></td>
                         <td class="text-center"><?php echo $det['cantidad']; ?></td>
-                        <td class="text-center">UN</td>
+                        <td class="text-center"><?php echo htmlspecialchars($det['unidad_medida'] ?? 'UN'); ?></td>
                         <td><?php echo htmlspecialchars($prod['nombre']); ?></td>
                         <td class="text-end"><?php echo format_money($det['precio_unitario']); ?></td>
                         <td class="text-end"><?php echo format_money($det['subtotal']); ?></td>
@@ -191,7 +200,7 @@ $getProd = function($pid) use ($productos) {
         <!-- Pie de página -->
         <div class="mt-5 text-center text-muted border-top pt-3" style="font-size: 0.8rem;">
             <p class="mb-0">Representación impresa de la <?php echo $venta['tipo_documento']; ?> Electrónica.</p>
-            <p class="mb-0">Generado desde el prototipo facturacion-mock.</p>
+            <p class="mb-0">Documento generado por Fact-Kard.</p>
         </div>
         
     </div>

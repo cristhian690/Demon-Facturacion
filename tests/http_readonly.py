@@ -27,13 +27,18 @@ try:
     paths = ['pages/dashboard.php', 'pages/inventario/index.php', 'pages/inventario/kardex.php',
              'pages/kardex/index.php', 'pages/ventas/documento.php?id=1',
              'pages/ventas/nueva.php', 'pages/compras/nueva.php', 'pages/ventas/index.php',
-             'pages/ventas/detalle.php?id=1', 'pages/inventario/kardex.php?venta_id=1']
+             'pages/ventas/detalle.php?id=1', 'pages/inventario/kardex.php?venta_id=1',
+             'pages/cuentas_cobrar/index.php', 'pages/reportes/index.php',
+             'pages/historial/index.php',
+             'actions/exportar_csv.php?reporte=ventas']
     paths += [f'pages/{table}/{page}.php' for table in ['clientes', 'proveedores', 'productos', 'almacenes'] for page in ['index', 'form']]
     for path in paths:
         response = request(path)
         html = response.read().decode('utf-8-sig')
         assert response.status == 200 and not re.search(r'(Warning|Fatal error|Parse error)(?:</b>)?:', html), path
-        for script in re.findall(r'<script(?:\s[^>]*)?>(.*?)</script>', html, re.S):
+        for attributes, script in re.findall(r'<script([^>]*)>(.*?)</script>', html, re.S):
+            if re.search(r'type=["\']application/json["\']', attributes, re.I):
+                continue
             if not script.strip():
                 continue
             with tempfile.NamedTemporaryFile(suffix='.js', delete=False, mode='w', encoding='utf-8') as f:

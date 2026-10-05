@@ -9,3 +9,6 @@ function quantity_value($value, $unit, $allowZero = false) {
     if (quantity_step($unit) === '1' && floor($number) !== $number) throw new InvalidArgumentException('Las unidades y piezas requieren cantidades enteras.');
     return round($number, 3);
 }
+function quantity_display($value) {
+    return rtrim(rtrim(number_format((float)$value, 3, '.', ','), '0'), '.');
+}

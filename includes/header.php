@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="empresa-id" content="<?php echo (int)($_SESSION['empresa_id'] ?? 0); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Gestión Empresarial (Prototipo)</title>
+    <title>Fact-Kard | Gestión empresarial</title>
     <!-- Bootstrap 5 CSS CDN (para simplificar en este paso, luego se puede mover a local) -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
@@ -29,6 +29,8 @@
                     <div class="d-flex align-items-center ms-auto">
                         <!-- Selector de Empresa -->
                         <form action="<?php echo url('actions/cambiar_empresa.php'); ?>" method="POST" class="d-flex align-items-center me-4">
+                            <?php if (empty($_SESSION['form_token'])) $_SESSION['form_token'] = bin2hex(random_bytes(32)); ?>
+                            <input type="hidden" name="form_token" value="<?php echo htmlspecialchars($_SESSION['form_token']); ?>">
                             <i class="bi bi-building me-2 text-primary"></i>
                             <?php 
                             $todas_empresas = get_data('empresas'); 
@@ -43,44 +45,19 @@
                             </select>
                         </form>
                         
-                        <!-- Notificaciones -->
-                        <a href="#" class="text-secondary me-3 position-relative">
-                            <i class="bi bi-bell fs-5"></i>
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem;">
-                                3
-                            </span>
-                        </a>
-                        
                         <!-- Usuario -->
-                        <div class="dropdown">
-                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <div class="d-flex align-items-center">
                                 <div class="bg-primary text-white rounded-circle d-flex justify-content-center align-items-center me-2" style="width: 32px; height: 32px;">
-                                    <?php echo substr($_SESSION['usuario']['nombre'], 0, 1); ?>
+                                    <?php echo htmlspecialchars(substr($_SESSION['usuario']['nombre'], 0, 1)); ?>
                                 </div>
                                 <div>
-                                    <div class="fw-bold" style="font-size: 0.85rem;"><?php echo $_SESSION['usuario']['nombre']; ?></div>
-                                    <div class="text-muted" style="font-size: 0.75rem; line-height: 1;"><?php echo $_SESSION['usuario']['rol']; ?></div>
+                                    <div class="fw-bold" style="font-size: 0.85rem;"><?php echo htmlspecialchars($_SESSION['usuario']['nombre']); ?></div>
+                                    <div class="text-muted" style="font-size: 0.75rem; line-height: 1;"><?php echo htmlspecialchars($_SESSION['usuario']['rol']); ?></div>
                                 </div>
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i>Perfil (Demo)</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item text-danger" href="#"><i class="bi bi-box-arrow-right me-2"></i>Salir</a></li>
-                            </ul>
                         </div>
                     </div>
                 </div>
             </nav>
             
             <!-- Main Content Area -->
-            <div class="container-fluid p-4">
-                <?php
-                $pending_assignment = false;
-                foreach (['clientes', 'proveedores', 'productos', 'almacenes'] as $catalog_name) {
-                    foreach (read_data($catalog_name) as $catalog_row) {
-                        if (empty($catalog_row['empresa_id'])) { $pending_assignment = true; break 2; }
-                    }
-                }
-                if ($pending_assignment): ?>
-                <div class="alert alert-warning" role="status">Hay registros anteriores pendientes de asignación a una empresa. Se conservaron y no se muestran hasta confirmar a quién pertenecen.</div>
-                <?php endif; ?>
+            <main class="container-fluid app-content p-4">

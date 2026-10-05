@@ -1,4 +1,4 @@
-            </div> <!-- Fin container-fluid -->
+            </main> <!-- Fin contenido -->
         </div> <!-- Fin page-content-wrapper -->
     </div> <!-- Fin wrapper -->
 
@@ -9,5 +9,8 @@
     <!-- Custom App JS -->
     <script src="<?php echo url('assets/js/app.js'); ?>"></script>
 <script src="<?php echo url('assets/js/forms.js'); ?>"></script>
+<?php foreach (($page_scripts ?? []) as $page_script): ?>
+<script src="<?php echo url($page_script); ?>"></script>
+<?php endforeach; ?>
 </body>
 </html>

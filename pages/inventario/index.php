@@ -30,7 +30,7 @@ $inventario_actual = array_filter($inventario, function($inv) {
 <div class="card shadow mb-4 border-top-primary">
     <div class="card-header py-3 d-flex justify-content-between align-items-center bg-white">
         <h6 class="m-0 font-weight-bold text-primary">Stock y Costos Promedio</h6>
-        <span class="badge bg-primary text-white fs-6">Validación Fase 3</span>
+        <a class="btn btn-sm btn-primary" href="<?php echo url('pages/inventario/kardex.php'); ?>"><i class="bi bi-journal-text me-1"></i>Ver Kardex completo</a>
     </div>
     <div class="card-body">
         <div class="table-responsive">

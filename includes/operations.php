@@ -28,6 +28,18 @@ function process_operation($sale, $input) {
     foreach (['tipo_documento','serie','numero','fecha'] as $key) $doc[$key] = input_text($input, $key, true);
     if (!valid_date($doc['fecha'])) throw new InvalidArgumentException('Fecha inválida.');
     if (!in_array($doc['tipo_documento'], ['Factura','Boleta'], true)) throw new InvalidArgumentException('Tipo de documento inválido.');
+    if (!preg_match('/^[A-Z0-9-]{1,10}$/D', $doc['serie'])) throw new InvalidArgumentException('La serie contiene caracteres inválidos.');
+    if (!preg_match('/^[0-9]{1,12}$/D', $doc['numero'])) throw new InvalidArgumentException('El número del documento debe contener solo dígitos.');
+    if ($sale) {
+        $doc['tipo_operacion'] = input_text($input + ['tipo_operacion'=>'Venta interna'], 'tipo_operacion', true);
+        if (!in_array($doc['tipo_operacion'], ['Venta interna','Venta para exportación'], true)) throw new InvalidArgumentException('Tipo de operación inválido.');
+        $doc['moneda'] = input_text($input + ['moneda'=>'PEN'], 'moneda', true);
+        if ($doc['moneda'] !== 'PEN') throw new InvalidArgumentException('Por ahora la facturación e inventario valorizado operan en soles.');
+        $doc['tipo_cambio'] = 1;
+        $doc['orden_compra'] = input_text($input, 'orden_compra');
+        $doc['observacion'] = input_text($input, 'observacion');
+        $doc['vendedor'] = $_SESSION['usuario']['nombre'] ?? 'Administrador';
+    }
     foreach ($documents as $old) {
         if ($old['tipo_documento'] === $doc['tipo_documento'] && $old['serie'] === $doc['serie'] && $old['numero'] === $doc['numero'] && ($sale || $old[$party] == $doc[$party])) throw new InvalidArgumentException('Ese documento ya está registrado.');
     }
@@ -92,6 +104,13 @@ function process_operation($sale, $input) {
     if ($sale) {
         $doc['entrega'] = $delivery;
         $doc['despachos'] = [];
+        $paymentType = $input['condicion_pago'] ?? 'contado';
+        if (!in_array($paymentType, ['contado','credito'], true)) throw new InvalidArgumentException('Condición de pago inválida.');
+        $doc['condicion_pago'] = $paymentType;
+        $doc['fecha_vencimiento'] = $paymentType === 'credito' ? input_text($input, 'fecha_vencimiento', true) : '';
+        if ($paymentType === 'credito' && (!valid_date($doc['fecha_vencimiento']) || $doc['fecha_vencimiento'] < $doc['fecha'])) throw new InvalidArgumentException('El vencimiento debe ser igual o posterior a la fecha de venta.');
+        $doc['estado_documento'] = 'Vigente';
+        $doc['devoluciones'] = [];
         if ($delivery === 'inmediata') {
             $dispatchLines = [];
             foreach ($doc['detalles'] as $i => $detail) $dispatchLines[] = ['linea'=>$i, 'producto_id'=>$detail['producto_id'], 'cantidad'=>$detail['cantidad'], 'costo_unitario'=>$detail['costo_venta_unitario'], 'costo_total'=>$detail['costo_venta_total']];

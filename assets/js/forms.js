@@ -113,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
         finally { opening = false; }
     });
     // Wide purchase/sale forms and standalone catalog fallback keep entered data on errors.
-    document.querySelectorAll('form[action*="procesar_"], form[action*="guardar_cliente"], form[action*="guardar_proveedor"], form[action*="guardar_producto"], form[action*="guardar_almacen"], form[action*="guardar_empresa"]').forEach(form => {
+    document.querySelectorAll('form[action*="procesar_"], form[action*="registrar_pago"], form[action*="registrar_reembolso"], form[action*="anular_venta"], form[action*="guardar_cliente"], form[action*="guardar_proveedor"], form[action*="guardar_producto"], form[action*="guardar_almacen"], form[action*="guardar_empresa"]').forEach(form => {
         let processing = false;
         form.addEventListener('submit', async event => {
             event.preventDefault();

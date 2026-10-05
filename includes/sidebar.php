@@ -41,9 +41,17 @@
         <a href="<?php echo url('pages/compras/index.php'); ?>" class="list-group-item list-group-item-action <?php echo is_active('compras') ? 'active' : ''; ?>">
             <i class="bi bi-cart-plus me-2"></i> Compras
         </a>
-        <a href="<?php echo url('pages/ventas/index.php'); ?>" class="list-group-item list-group-item-action <?php echo is_active('ventas') ? 'active' : ''; ?>">
-            <i class="bi bi-receipt me-2"></i> Ventas / Facturación
-        </a>
+        <div class="sidebar-module <?php echo (is_active('ventas') || is_active('cuentas_cobrar')) ? 'open' : ''; ?>">
+            <a href="<?php echo url('pages/ventas/index.php'); ?>" class="list-group-item list-group-item-action <?php echo (is_active('ventas') || is_active('cuentas_cobrar')) ? 'active' : ''; ?>">
+                <i class="bi bi-receipt me-2"></i> Ventas / Facturación
+            </a>
+            <div class="sidebar-submenu">
+                <a href="<?php echo url('pages/ventas/nueva.php'); ?>" class="<?php echo is_active('ventas/nueva.php') ? 'active' : ''; ?>"><i class="bi bi-plus-circle"></i>Nuevo comprobante</a>
+                <a href="<?php echo url('pages/ventas/index.php'); ?>" class="<?php echo is_active('ventas/index.php') ? 'active' : ''; ?>"><i class="bi bi-list-ul"></i>Comprobantes</a>
+                <a href="<?php echo url('pages/ventas/index.php?entrega=Pendiente'); ?>"><i class="bi bi-truck"></i>Entregas pendientes</a>
+                <a href="<?php echo url('pages/cuentas_cobrar/index.php'); ?>" class="<?php echo is_active('cuentas_cobrar') ? 'active' : ''; ?>"><i class="bi bi-cash-coin"></i>Cuentas por cobrar</a>
+            </div>
+        </div>
         <a href="<?php echo url('pages/inventario/index.php'); ?>" class="list-group-item list-group-item-action <?php echo (is_active('inventario') && !is_active('kardex.php')) ? 'active' : ''; ?>">
             <i class="bi bi-boxes me-2"></i> Inventario
         </a>
@@ -52,10 +60,6 @@
         <a href="<?php echo url('pages/inventario/kardex.php'); ?>" class="list-group-item list-group-item-action <?php echo is_active('kardex.php') ? 'active' : ''; ?>">
             <i class="bi bi-file-earmark-spreadsheet me-2"></i> Kardex Valorizado
         </a>
-        <a href="<?php echo url('pages/kardex/importacion.php'); ?>" class="list-group-item list-group-item-action <?php echo is_active('importacion.php') ? 'active' : ''; ?>">
-            <i class="bi bi-cloud-upload me-2"></i> Importación Histórica
-        </a>
-        
         <div class="px-4 text-uppercase fw-bold mb-2 mt-4" style="font-size: 0.65rem; letter-spacing: 0.1em; color: #52525b;">Reportes</div>
         <a href="<?php echo url('pages/reportes/index.php'); ?>" class="list-group-item list-group-item-action <?php echo is_active('reportes') ? 'active' : ''; ?>">
             <i class="bi bi-pie-chart me-2"></i> Reportes Generales
@@ -66,11 +70,4 @@
         
     </div>
     
-    <div class="mt-auto p-3 m-3 rounded text-start" style="font-size: 0.75rem; background-color: #27272a; border: 1px solid #3f3f46;">
-        <div class="d-flex align-items-center mb-1">
-            <i class="bi bi-shield-check text-success fs-5 me-2"></i>
-            <strong class="text-light">Modo Prototipo</strong>
-        </div>
-        <span class="text-light d-block lh-sm mt-1">Prototipo para validación y pruebas</span>
-    </div>
 </div>

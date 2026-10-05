@@ -9,83 +9,63 @@ $almacenes = get_data('almacenes');
 ?>
 <?php include '../../includes/header.php'; ?>
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="h3 text-gray-800">Registrar Nueva Venta</h2>
-    <a href="<?php echo url('pages/ventas/index.php'); ?>" class="btn btn-secondary">
-        <i class="bi bi-arrow-left me-1"></i> Volver
-    </a>
+<div class="page-heading d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+    <div><span class="page-eyebrow">Ventas / Facturación</span><h1 class="h3 mb-1">Nuevo comprobante</h1><p class="text-muted mb-0">Completa los datos comerciales, productos, entrega y condición de pago.</p></div>
+    <a href="<?php echo url('pages/ventas/index.php'); ?>" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Volver al listado</a>
 </div>
 
-<form action="<?php echo url('actions/procesar_venta.php'); ?>" method="POST" id="formVenta">
+<form action="<?php echo url('actions/procesar_venta.php'); ?>" method="POST" id="formVenta" class="invoice-form">
     <?php echo form_context(); ?>
     <div class="alert alert-danger d-none form-errors" role="alert"></div>
-    <div class="card card-body mb-3">
-        <label for="deliveryMode" class="form-label">Entrega de mercadería</label>
-        <select id="deliveryMode" name="entrega" class="form-select">
-            <option value="inmediata">Entregar todo al confirmar (descuenta stock)</option>
-            <option value="pendiente">Dejar entrega pendiente (sin descontar stock)</option>
-        </select>
-        <small class="text-muted mt-2">Una entrega pendiente no reserva existencias. El stock se valida en cada despacho desde el detalle de la venta.</small>
-    </div>
-    
-    <!-- Cabecera de la Venta -->
-    <div class="card shadow mb-4 border-top-warning">
-        <div class="card-header py-3 bg-white">
-            <h6 class="m-0 font-weight-bold text-warning-emphasis">Datos del Documento</h6>
-        </div>
+    <div class="card invoice-shell mb-4">
+        <div class="card-header"><div class="invoice-section-title"><i class="bi bi-file-earmark-text"></i><span>Cabecera del comprobante</span></div></div>
         <div class="card-body">
-            <div class="row mb-3">
-                <div class="col-md-4">
-                    <label class="form-label">Cliente <span class="text-danger">*</span></label>
+            <div class="row g-3 mb-3">
+                <div class="col-md-6 col-xl-3"><label class="form-label">Empresa</label><input class="form-control readonly-field" value="<?php echo htmlspecialchars(get_empresa_activa()['nombre']); ?>" readonly></div>
+                <div class="col-md-6 col-xl-3"><label class="form-label">Vendedor</label><input class="form-control readonly-field" value="<?php echo htmlspecialchars($_SESSION['usuario']['nombre'] ?? 'Administrador'); ?>" readonly></div>
+                <div class="col-md-6 col-xl-2"><label class="form-label">Tipo de comprobante <span class="text-danger">*</span></label><select class="form-select" name="tipo_documento" required><option value="Factura">Factura</option><option value="Boleta">Boleta</option></select></div>
+                <div class="col-md-3 col-xl-2"><label class="form-label">Serie <span class="text-danger">*</span></label><input type="text" class="form-control text-uppercase" name="serie" value="F001" maxlength="10" pattern="[A-Za-z0-9-]+" oninput="this.value=this.value.toUpperCase()" required></div>
+                <div class="col-md-3 col-xl-2"><label class="form-label">Número <span class="text-danger">*</span></label><input type="text" inputmode="numeric" class="form-control" name="numero" placeholder="000001" maxlength="12" pattern="[0-9]+" required></div>
+            </div>
+            <div class="row g-3 mb-3">
+                <div class="col-md-6 col-xl-3"><label class="form-label">Fecha de emisión <span class="text-danger">*</span></label><input type="date" class="form-control" name="fecha" value="<?php echo date('Y-m-d'); ?>" required></div>
+                <div class="col-md-6 col-xl-3"><label for="paymentTerms" class="form-label">Condición de pago <span class="text-danger">*</span></label><select id="paymentTerms" name="condicion_pago" class="form-select" required><option value="contado">Contado</option><option value="credito">Crédito</option></select></div>
+                <div class="col-md-6 col-xl-3"><label for="dueDate" class="form-label">Fecha de vencimiento</label><input id="dueDate" name="fecha_vencimiento" type="date" class="form-control" disabled></div>
+                <div class="col-md-6 col-xl-3"><label class="form-label">Tipo de operación</label><select name="tipo_operacion" class="form-select"><option value="Venta interna">Venta interna</option><option value="Venta para exportación">Venta para exportación</option></select></div>
+            </div>
+            <div class="row g-3">
+                <div class="col-md-6 col-xl-3"><label class="form-label">Moneda</label><select name="moneda" id="saleCurrency" class="form-select"><option value="PEN">Soles (PEN)</option></select></div>
+                <div class="col-md-6 col-xl-3"><label class="form-label">Tipo de cambio</label><input type="number" id="exchangeRate" name="tipo_cambio" class="form-control readonly-field" value="1.000" min="0.001" step="0.001" readonly></div>
+                <div class="col-md-6 col-xl-3"><label class="form-label">Almacén de salida <span class="text-danger">*</span></label><select class="form-select" name="almacen_id" id="selectAlmacen" required><option value="">Seleccione almacén...</option><?php foreach($almacenes as $a): ?><option value="<?php echo $a['id']; ?>"><?php echo htmlspecialchars($a['nombre']); ?></option><?php endforeach; ?></select></div>
+                <div class="col-md-6 col-xl-3"><label for="deliveryMode" class="form-label">Entrega de mercadería</label><select id="deliveryMode" name="entrega" class="form-select"><option value="inmediata">Despachar al confirmar</option><option value="pendiente">Dejar pendiente de despacho</option></select></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header"><div class="invoice-section-title"><i class="bi bi-person-vcard"></i><span>Cliente e información comercial</span></div></div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-lg-6">
+                    <label class="form-label">Cliente <span class="text-danger">*</span> <a class="ms-1 text-decoration-none" data-select-target="cliente_id" href="<?php echo url('pages/clientes/form.php'); ?>">[+ Nuevo]</a></label>
                     <select class="form-select" name="cliente_id" required>
                         <option value="">Seleccione cliente...</option>
                         <?php foreach($clientes as $c): ?>
                             <option value="<?php echo $c['id']; ?>"><?php echo htmlspecialchars($c['nombre'] . ' (' . $c['numero_documento'] . ')'); ?></option>
                         <?php endforeach; ?>
                     </select>
-                    <a class="btn btn-sm btn-outline-primary mt-2" data-select-target="cliente_id" href="<?php echo url('pages/clientes/form.php'); ?>">Agregar cliente</a>
                 </div>
-                <div class="col-md-2">
-                    <label class="form-label">Tipo Doc. <span class="text-danger">*</span></label>
-                    <select class="form-select" name="tipo_documento" required>
-                        <option value="Factura">Factura</option>
-                        <option value="Boleta">Boleta</option>
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <label class="form-label">Serie <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" name="serie" placeholder="F001" required>
-                </div>
-                <div class="col-md-2">
-                    <label class="form-label">Número <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" name="numero" placeholder="000421" required>
-                </div>
-                <div class="col-md-2">
-                    <label class="form-label">Fecha <span class="text-danger">*</span></label>
-                    <input type="date" class="form-control" name="fecha" value="<?php echo date('Y-m-d'); ?>" required>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-4">
-                    <label class="form-label">Almacén Origen (Salida de mercancía) <span class="text-danger">*</span></label>
-                    <select class="form-select" name="almacen_id" id="selectAlmacen" required>
-                        <option value="">Seleccione...</option>
-                        <?php foreach($almacenes as $a): ?>
-                            <option value="<?php echo $a['id']; ?>"><?php echo htmlspecialchars($a['nombre']); ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
+                <div class="col-md-6 col-lg-3"><label class="form-label">Orden de compra</label><input class="form-control" name="orden_compra" maxlength="100" placeholder="Opcional"></div>
+                <div class="col-md-6 col-lg-3"><label class="form-label">Observación</label><input class="form-control" name="observacion" maxlength="500" placeholder="Información adicional"></div>
             </div>
         </div>
     </div>
 
     <!-- Detalle de Productos -->
     <div class="card shadow mb-4">
-        <div class="card-header py-3 d-flex justify-content-between align-items-center">
-            <h6 class="m-0 font-weight-bold text-primary">Detalle de Productos a Vender</h6>
-            <button type="button" class="btn btn-sm btn-outline-primary" id="btnAgregarFila">
-                <i class="bi bi-plus"></i> Agregar Producto
-            </button>
+        <div class="card-header py-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <div class="invoice-section-title"><i class="bi bi-box-seam"></i><span>Productos o servicios</span></div>
+            <div class="invoice-toolbar"><a class="btn btn-sm btn-outline-success" data-select-target="productos[]" href="<?php echo url('pages/productos/form.php'); ?>"><i class="bi bi-plus-circle me-1"></i>Crear producto</a><button type="button" class="btn btn-sm btn-primary" id="btnAgregarFila"><i class="bi bi-plus"></i>Agregar línea</button></div>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -186,6 +166,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const selectAlmacen = document.getElementById('selectAlmacen');
     const form = document.getElementById('formVenta');
     const delivery = document.getElementById('deliveryMode');
+    const terms = document.getElementById('paymentTerms');
+    const due = document.getElementById('dueDate');
+    terms.addEventListener('change', () => { due.disabled = terms.value !== 'credito'; due.required = terms.value === 'credito'; if (due.disabled) due.value = ''; });
     form.dataset.requiresStock = 'true';
     const preview = form.querySelector('.dispatch-preview');
     

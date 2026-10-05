@@ -19,11 +19,28 @@ try {
 } catch (InvalidArgumentException $e) { $filter_error = $e->getMessage(); }
 $almacen_names = array_column($almacenes, 'nombre', 'id');
 $producto_names = array_column($productos, 'nombre', 'id');
+$kardexSummary = ['entrada_cantidad'=>0.0,'entrada_valor'=>0.0,'salida_cantidad'=>0.0,'salida_valor'=>0.0];
+$movementDates = [];
+foreach ($movimientos as $movement) {
+    foreach ($kardexSummary as $field => $value) $kardexSummary[$field] += (float)($movement[$field] ?? 0);
+    $dateKey = substr($movement['fecha'], 0, 10);
+    if (!isset($movementDates[$dateKey])) $movementDates[$dateKey] = ['entrada'=>0.0,'salida'=>0.0];
+    $movementDates[$dateKey]['entrada'] += (float)($movement['entrada_valor'] ?? 0);
+    $movementDates[$dateKey]['salida'] += (float)($movement['salida_valor'] ?? 0);
+}
+$currentStock = 0.0; $currentValue = 0.0;
+foreach (get_data('inventario') as $stockRow) {
+    if ($producto_id !== '' && $stockRow['producto_id'] != $producto_id) continue;
+    if ($almacen_id !== '' && $stockRow['almacen_id'] != $almacen_id) continue;
+    $currentStock += (float)$stockRow['stock_actual'];
+    $currentValue += (float)$stockRow['valor_inventario'];
+}
 ?>
 <?php include '../../includes/header.php'; ?>
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="h3 text-gray-800">Kardex Valorizado</h2>
+<div class="page-heading d-flex justify-content-between align-items-end mb-4">
+    <div><span class="page-eyebrow">Control de inventario</span><h1 class="h3 mb-1">Kardex valorizado</h1><p class="text-muted mb-0">Entradas por compras, salidas por despachos y saldo valorizado con CPP.</p></div>
+    <span class="badge rounded-pill text-bg-primary px-3 py-2">Promedio ponderado</span>
 </div>
 
 <!-- Filtro de Búsqueda -->
@@ -37,8 +54,9 @@ $producto_names = array_column($productos, 'nombre', 'id');
             <input type="hidden" name="venta_id" value="<?php echo htmlspecialchars($venta_id); ?>">
             <p>Movimientos de la venta #<?php echo htmlspecialchars($venta_id); ?>. <a href="<?php echo url('pages/inventario/kardex.php'); ?>">Ver todo el Kardex</a></p>
             <?php endif; ?>
-            <div class="col-md-6">
-                <select name="producto_id" class="form-select" aria-label="Producto">
+            <div class="col-md-6 mb-2">
+                <label class="form-label" for="filtroProducto">Producto</label>
+                <select id="filtroProducto" name="producto_id" class="form-select">
                     <option value="">Todos los productos</option>
                     <?php foreach($productos as $p): ?>
                         <option value="<?php echo $p['id']; ?>" <?php echo ($producto_id == $p['id']) ? 'selected' : ''; ?>>
@@ -48,7 +66,7 @@ $producto_names = array_column($productos, 'nombre', 'id');
                 </select>
             </div>
             <div class="col-md-6 mb-2">
-                <label class="form-label" for="filtroAlmacen">Almacen</label>
+                <label class="form-label" for="filtroAlmacen">Almacén</label>
                 <select id="filtroAlmacen" name="almacen_id" class="form-select">
                     <option value="">Todos los almacenes</option>
                     <?php foreach ($almacenes as $a): ?>
@@ -75,17 +93,27 @@ $producto_names = array_column($productos, 'nombre', 'id');
 <?php if ($filter_error): ?>
 <div class="alert alert-danger"><?php echo htmlspecialchars($filter_error); ?></div>
 <?php else: ?>
-<div class="alert alert-info">Los saldos y el CPP corresponden al momento de cada movimiento, por producto y almacen. El rango solo filtra las filas visibles.</div>
+    <div class="row g-3 mb-4">
+        <div class="col-sm-6 col-xl-3"><div class="card summary-card summary-entry"><small>Entradas visibles</small><strong><?php echo quantity_display($kardexSummary['entrada_cantidad']); ?></strong><span><?php echo format_money($kardexSummary['entrada_valor']); ?></span></div></div>
+        <div class="col-sm-6 col-xl-3"><div class="card summary-card summary-exit"><small>Salidas visibles</small><strong><?php echo quantity_display($kardexSummary['salida_cantidad']); ?></strong><span><?php echo format_money($kardexSummary['salida_valor']); ?></span></div></div>
+        <div class="col-sm-6 col-xl-3"><div class="card summary-card summary-balance"><small>Stock actual</small><strong><?php echo quantity_display($currentStock); ?></strong><span>Según filtros de producto y almacén</span></div></div>
+        <div class="col-sm-6 col-xl-3"><div class="card summary-card summary-value"><small>Valor actual</small><strong><?php echo format_money($currentValue); ?></strong><span>Valorizado al CPP</span></div></div>
+    </div>
+    <div class="card chart-card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center"><div><span class="chart-kicker">Flujo valorizado</span><h2 class="h6 mb-0">Entradas y salidas del periodo visible</h2></div><span class="text-muted small"><?php echo count($movimientos); ?> movimiento(s)</span></div>
+        <div class="card-body"><div class="chart-wrap chart-wrap-kardex"><canvas id="kardexMovementChart" aria-label="Entradas y salidas valorizadas del Kardex"></canvas></div></div>
+    </div>
+    <script id="kardexChartData" type="application/json"><?php echo json_encode(['labels'=>array_map(fn($date)=>date('d/m', strtotime($date)), array_keys($movementDates)),'entries'=>array_column($movementDates,'entrada'),'exits'=>array_column($movementDates,'salida')], JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES); ?></script>
     <div class="card shadow mb-4 border-top-info">
         <div class="card-header py-3 d-flex justify-content-between align-items-center bg-white">
             <h6 class="m-0 font-weight-bold text-info-emphasis">
                 Kardex: <?php echo htmlspecialchars($producto_seleccionado['nombre'] ?? 'Todos los productos'); ?>
             </h6>
-            <span class="badge bg-secondary">Método: Promedio Ponderado</span>
+            <span class="text-muted small"><?php echo count($movimientos); ?> movimiento(s)</span>
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-bordered table-sm align-middle mb-0" style="font-size: 0.85rem;">
+                <table class="table table-bordered table-sm align-middle mb-0 kardex-table" style="font-size: 0.85rem;">
                     <thead class="table-light text-center align-middle">
                         <tr>
                             <th rowspan="2">Producto / Almacen</th><th rowspan="2" width="90">Fecha</th>
@@ -124,6 +152,8 @@ $producto_names = array_column($productos, 'nombre', 'id');
                                             <span class="badge bg-success bg-opacity-75 text-white w-100">COMPRA</span>
                                         <?php elseif($m['tipo_operacion'] === 'VENTA'): ?>
                                             <span class="badge bg-danger bg-opacity-75 text-white w-100">VENTA</span>
+                                        <?php elseif($m['tipo_operacion'] === 'DEVOLUCION_VENTA'): ?>
+                                            <span class="badge bg-info text-dark w-100">DEVOLUCIÓN</span>
                                         <?php else: ?>
                                             <span class="badge bg-secondary w-100"><?php echo htmlspecialchars($m['tipo_operacion']); ?></span>
                                         <?php endif; ?>
@@ -154,4 +184,4 @@ $producto_names = array_column($productos, 'nombre', 'id');
 
 <?php endif; ?>
 
-<?php include '../../includes/footer.php'; ?>
+<?php $page_scripts = ['assets/js/kardex-chart.js']; include '../../includes/footer.php'; ?>

@@ -6,7 +6,7 @@ function url($path = '') {
 }
 
 function scoped_table($name) {
-    return in_array($name, ['clientes','proveedores','productos','almacenes','compras','ventas','inventario','kardex'], true);
+    return in_array($name, ['clientes','proveedores','productos','almacenes','compras','ventas','inventario','kardex','devoluciones','pagos','reembolsos','auditoria'], true);
 }
 function read_data($name) {
     $path = DATA_PATH . $name . '.json';
@@ -104,4 +104,17 @@ function action_response($callback) {
         error_log($e->getMessage()); http_response_code(500); echo json_encode(['error' => 'No se pudo guardar. Revisa el almacenamiento e intenta nuevamente.']);
     }
     exit;
+}
+
+function append_audit(&$rows, $action, $entity, $entityId, $detail = '') {
+    $rows[] = [
+        'id' => next_id('auditoria') + count($rows),
+        'empresa_id' => (int)$_SESSION['empresa_id'],
+        'fecha' => date('c'),
+        'accion' => $action,
+        'entidad' => $entity,
+        'entidad_id' => (int)$entityId,
+        'detalle' => $detail,
+        'autor' => $_SESSION['usuario']['nombre'] ?? 'Sesión local'
+    ];
 }

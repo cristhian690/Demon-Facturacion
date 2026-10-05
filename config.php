@@ -1,15 +1,22 @@
 <?php
 // config.php
-session_start();
+// XAMPP puede configurar C:\xampp\tmp como ruta de sesión aunque el usuario de
+// Windows no tenga permisos allí. Usa la carpeta temporal escribible del usuario.
+if (session_status() === PHP_SESSION_NONE) {
+    $session_path = sys_get_temp_dir();
+    if (is_dir($session_path) && is_writable($session_path)) session_save_path($session_path);
+    session_start();
+}
 
 // Definir constante base
 define('BASE_URL', '/');
 define('DATA_PATH', __DIR__ . '/data/');
+define('ENABLE_DEMO_TOOLS', false);
 
-// Inicializar sesión demo
+// Inicializar la sesión local mientras no exista un módulo de autenticación.
 if (!isset($_SESSION['usuario'])) {
     $_SESSION['usuario'] = [
-        'nombre' => 'Admin Demo',
+        'nombre' => 'Administrador',
         'rol' => 'Administrador'
     ];
 }
