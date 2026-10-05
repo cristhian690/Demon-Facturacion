@@ -178,5 +178,24 @@
         "saldo_cantidad": 2,
         "saldo_valor": 200,
         "cpp": 100
+    },
+    {
+        "id": 11,
+        "producto_id": 4,
+        "almacen_id": 2,
+        "empresa_id": 1,
+        "fecha": "2026-10-06",
+        "documento": "Factura F001-0012",
+        "tipo_operacion": "VENTA",
+        "entrada_cantidad": 0,
+        "entrada_costo": 0,
+        "entrada_valor": 0,
+        "salida_cantidad": 2,
+        "salida_costo": 100,
+        "salida_valor": 200,
+        "saldo_cantidad": 0,
+        "saldo_valor": 0,
+        "cpp": 100,
+        "venta_id": 3
     }
 ]

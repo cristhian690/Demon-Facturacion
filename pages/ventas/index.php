@@ -75,20 +75,21 @@ function sale_status_class($status) {
 
 <div class="card mb-4">
     <div class="card-header d-flex justify-content-between align-items-center"><h2 class="h6 mb-0">Comprobantes registrados</h2><span class="text-muted small"><?php echo count($filtradas); ?> resultado(s)</span></div>
-    <div class="table-responsive"><table class="table table-hover align-middle">
-        <thead><tr><th>Emisión</th><th>Cliente / comprobante</th><th>Almacén</th><th>Documento</th><th>Entrega</th><th>Pago</th><th class="text-end">Total</th><th class="text-end">Saldo</th><th class="text-end">Acciones</th></tr></thead>
+    <div class="table-responsive"><table class="table table-hover align-middle sales-table">
+        <thead><tr><th>Tipo</th><th>Serie - número</th><th>Cliente</th><th>Fecha</th><th class="text-end">Total</th><th>Condición</th><th>Entrega</th><th>Estado</th><th>Estado SUNAT</th><th class="text-end">Acciones</th></tr></thead>
         <tbody>
-        <?php if (!$filtradas): ?><tr><td colspan="9" class="empty-state"><i class="bi bi-receipt"></i><strong>No se encontraron ventas</strong><span>Prueba con otros filtros o registra una nueva venta.</span></td></tr><?php endif; ?>
+        <?php if (!$filtradas): ?><tr><td colspan="10" class="empty-state"><i class="bi bi-receipt"></i><strong>No se encontraron ventas</strong><span>Prueba con otros filtros o registra una nueva venta.</span></td></tr><?php endif; ?>
         <?php foreach ($filtradas as $venta): $docStatus=$venta['estado_documento']??'Vigente'; $fin=$venta['_finanzas']; ?>
             <tr>
-                <td><strong><?php echo date('d/m/Y', strtotime($venta['fecha'])); ?></strong><small class="d-block text-muted">#<?php echo (int)$venta['id']; ?></small></td>
-                <td><strong><?php echo htmlspecialchars($venta['_cliente']); ?></strong><small class="d-block text-muted"><?php echo htmlspecialchars($venta['_documento']); ?></small></td>
-                <td><?php echo htmlspecialchars($almacenes[$venta['almacen_id']]['nombre'] ?? 'No disponible'); ?></td>
-                <td><span class="badge text-bg-<?php echo $docStatus==='Anulada'?'danger':'primary'; ?>"><?php echo htmlspecialchars($docStatus); ?></span></td>
-                <td><span class="badge text-bg-<?php echo sale_status_class($venta['_entrega']); ?>"><?php echo htmlspecialchars($venta['_entrega']); ?></span></td>
-                <td><span class="badge text-bg-<?php echo sale_status_class($fin['estado']); ?>"><?php echo htmlspecialchars($fin['estado']); ?></span></td>
+                <td><span class="sale-doc-type"><i class="bi bi-receipt"></i><?php echo htmlspecialchars($venta['tipo_documento']); ?></span></td>
+                <td><strong><?php echo htmlspecialchars($venta['serie'].'-'.$venta['numero']); ?></strong><small class="d-block text-muted">Registro #<?php echo (int)$venta['id']; ?></small></td>
+                <td><strong><?php echo htmlspecialchars($venta['_cliente']); ?></strong></td>
+                <td><?php echo date('d/m/Y', strtotime($venta['fecha'])); ?></td>
                 <td class="text-end fw-bold"><?php echo format_money($venta['total']); ?></td>
-                <td class="text-end <?php echo $fin['saldo']>0?'text-danger fw-bold':'text-success'; ?>"><?php echo format_money($fin['saldo']); ?></td>
+                <td><span class="badge rounded-pill text-bg-light border"><?php echo ($venta['condicion_pago']??'contado')==='credito'?'Crédito':'Contado'; ?></span><?php if(($venta['condicion_pago']??'contado')==='credito'&&!empty($venta['fecha_vencimiento'])): ?><small class="d-block text-muted">Vence <?php echo date('d/m/Y',strtotime($venta['fecha_vencimiento'])); ?></small><?php endif; ?></td>
+                <td><span class="badge text-bg-<?php echo sale_status_class($venta['_entrega']); ?>"><?php echo htmlspecialchars($venta['_entrega']); ?></span></td>
+                <td><span class="badge text-bg-<?php echo $docStatus==='Anulada'?'danger':'primary'; ?>"><?php echo htmlspecialchars($docStatus); ?></span><small class="d-block text-muted mt-1"><?php echo htmlspecialchars($fin['estado']); ?></small></td>
+                <td><span class="sunat-status"><i class="bi bi-hourglass-split"></i>En desarrollo</span></td>
                 <td class="text-end text-nowrap">
                     <a href="<?php echo url('pages/ventas/detalle.php?id='.$venta['id']); ?>" class="btn btn-sm btn-primary" title="Ver detalle"><i class="bi bi-eye"></i></a>
                     <a href="<?php echo url('pages/ventas/documento.php?id='.$venta['id']); ?>" target="_blank" class="btn btn-sm btn-outline-secondary" title="Ver comprobante"><i class="bi bi-file-earmark-text"></i></a>

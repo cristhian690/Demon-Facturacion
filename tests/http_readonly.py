@@ -29,7 +29,10 @@ try:
              'pages/ventas/nueva.php', 'pages/compras/nueva.php', 'pages/ventas/index.php',
              'pages/ventas/detalle.php?id=1', 'pages/inventario/kardex.php?venta_id=1',
              'pages/cuentas_cobrar/index.php', 'pages/reportes/index.php',
-             'pages/historial/index.php',
+             'pages/historial/index.php', 'pages/sunat/index.php',
+             'pages/sunat/documentos.php', 'pages/sunat/nota_credito.php',
+             'pages/sunat/nota_debito.php', 'pages/sunat/estado.php',
+             'pages/sunat/configuracion.php',
              'actions/exportar_csv.php?reporte=ventas']
     paths += [f'pages/{table}/{page}.php' for table in ['clientes', 'proveedores', 'productos', 'almacenes'] for page in ['index', 'form']]
     for path in paths:
@@ -48,6 +51,21 @@ try:
                 subprocess.run(['node', '--check', filename], check=True, capture_output=True)
             finally:
                 Path(filename).unlink()
+    inventory_html = request('pages/inventario/index.php?estado=sin_stock').read().decode('utf-8-sig')
+    assert 'name="estado"' in inventory_html and 'value="sin_stock" selected' in inventory_html
+    inventory_html = request('pages/inventario/index.php').read().decode('utf-8-sig')
+    assert re.search(r'pages/inventario/kardex\.php\?producto_id=\d+&(?:amp;)?almacen_id=\d+', inventory_html), 'Inventory Kardex link missing'
+    sale_html = request('pages/ventas/detalle.php?id=1').read().decode('utf-8-sig')
+    assert re.search(r'pages/inventario/kardex\.php\?venta_id=\d+', sale_html), 'Sale Kardex link missing'
+    kardex_html = request('pages/inventario/kardex.php').read().decode('utf-8-sig')
+    for marker in ['name="tipo_operacion"', 'Datos del movimiento', 'Entradas', 'Salidas', 'Saldo histórico', 'snapshots históricos', 'Próximamente']:
+        assert marker in kardex_html, 'Kardex marker missing: ' + marker
+    sunat_html = request('pages/sunat/documentos.php').read().decode('utf-8-sig')
+    assert 'No enviado' in sunat_html and 'Disponible en integraci' in sunat_html
+    assert re.search(r'sidebar-module open sidebar-future', sunat_html), 'SUNAT sidebar is not active'
+    assert not re.search(r'https?://[^"\']*(?:sunat|gob\.pe)', sunat_html, re.I), 'Unexpected external SUNAT call or link'
+    sale_html = request('pages/ventas/detalle.php?id=1').read().decode('utf-8-sig')
+    assert 'pages/sunat/documentos.php' in sale_html, 'Sale SUNAT link missing'
     for path in ['data/clientes.json', 'data/ventas.json', 'tests/business.php', 'includes/helpers.php', '.git/config']:
         try:
             request(path)
@@ -59,7 +77,7 @@ try:
         raise AssertionError('Expected company mismatch')
     except urllib.error.HTTPError as e:
         assert e.code == 422 and 'error' in json.loads(e.read())
-    print(f'HTTP OK: {len(paths)} paginas; JS inline valido; 5 archivos privados bloqueados; empresa incorrecta rechazada.')
+    print(f'HTTP OK: {len(paths)} paginas; JS inline valido; Kardex técnico y enlaces desde Inventario/Venta; 5 archivos privados bloqueados; empresa incorrecta rechazada.')
 finally:
     assert before == hashes(), 'Project JSON data changed!'
     print('Datos JSON: hashes identicos antes/despues.')

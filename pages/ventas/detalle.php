@@ -3,169 +3,44 @@ require_once '../../config.php';
 require_once '../../includes/helpers.php';
 require_once '../../includes/returns.php';
 require_once '../../includes/finance.php';
-
-$id = $_GET['id'] ?? null;
-if (!$id) {
-    header("Location: " . BASE_URL . "pages/ventas/index.php");
-    exit;
-}
-
-$ventas = get_data('ventas');
-$clientes = get_data('clientes');
-$productos = get_data('productos');
-
-$venta = null;
-foreach ($ventas as $v) {
-    if ($v['id'] == $id && $v['empresa_id'] == $_SESSION['empresa_id']) {
-        $venta = $v;
-        break;
-    }
-}
-
-if (!$venta) {
-    echo "Venta no encontrada.";
-    exit;
-}
-
-$getCliName = function($cid) use ($clientes) {
-    foreach($clientes as $c) { if ($c['id'] == $cid) return $c['nombre']; }
-    return 'Desconocido';
-};
-
-$getProdName = function($pid) use ($productos) {
-    foreach($productos as $p) { if ($p['id'] == $pid) return $p['sku'] . ' - ' . $p['nombre']; }
-    return 'Desconocido';
-};
+$id=$_GET['id']??null; if(!$id){header('Location: '.url('pages/ventas/index.php'));exit;}
+$venta=null; foreach(get_data('ventas') as $row) if((string)$row['id']===(string)$id){$venta=$row;break;}
+if(!$venta){http_response_code(404);echo 'Venta no encontrada.';exit;}
+$clientes=array_column(get_data('clientes'),'nombre','id'); $productos=get_data('productos'); $producto_por_id=array_column($productos,null,'id'); $almacenes=array_column(get_data('almacenes'),'nombre','id');
+$getProdName=fn($pid)=>isset($producto_por_id[$pid]) ? (($producto_por_id[$pid]['sku']??'').' - '.$producto_por_id[$pid]['nombre']) : 'Producto #'.$pid.' no disponible';
+$financial=sale_financials($venta); $deliveryStatus=dispatch_status($venta); $documentStatus=$venta['estado_documento']??'Vigente';
+$totalDespachado=0; $totalPendiente=0; foreach($venta['detalles'] as $line){$sent=delivered_quantity($venta,$line);$totalDespachado+=$sent;$totalPendiente+=max(0,(float)$line['cantidad']-$sent);}
+include '../../includes/header.php';
 ?>
-<?php include '../../includes/header.php'; ?>
-
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="h3 text-gray-800">Detalle de la venta y sus entregas</h2>
-    <a href="<?php echo url('pages/ventas/index.php'); ?>" class="btn btn-secondary">
-        <i class="bi bi-arrow-left me-1"></i> Volver a Ventas
-    </a>
+<div class="page-heading d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+ <div><span class="page-eyebrow">Ventas / Facturación</span><h1 class="h3 mb-1"><?php echo htmlspecialchars($venta['tipo_documento'].' '.$venta['serie'].'-'.$venta['numero']); ?></h1><p class="text-muted mb-0">Detalle comercial, inventario, Kardex, entrega y cobranza.</p></div>
+ <div class="d-flex flex-wrap gap-2"><a href="<?php echo url('pages/ventas/index.php'); ?>" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Comprobantes</a><a href="<?php echo url('pages/ventas/documento.php?id='.$venta['id']); ?>" target="_blank" class="btn btn-outline-primary"><i class="bi bi-file-earmark-text me-1"></i>Ver comprobante</a><a href="<?php echo url('pages/inventario/kardex.php?venta_id='.$venta['id']); ?>" class="btn btn-primary"><i class="bi bi-journal-text me-1"></i>Ver movimiento en Kardex</a></div>
 </div>
 
-<!-- Paso 1: Venta Registrada -->
+<div class="sale-state-strip mb-4">
+ <span><small>Documento</small><strong class="<?php echo $documentStatus==='Anulada'?'text-danger':''; ?>"><?php echo htmlspecialchars($documentStatus); ?></strong></span>
+ <span><small>Entrega</small><strong><?php echo htmlspecialchars($deliveryStatus); ?></strong></span>
+ <span><small>Pago</small><strong><?php echo htmlspecialchars($financial['estado']); ?></strong></span>
+ <span><small>Estado SUNAT</small><strong class="text-muted">En desarrollo</strong></span>
+</div>
+<?php if($documentStatus==='Anulada'): ?><div class="alert alert-danger"><strong>COMPROBANTE ANULADO</strong><?php if(!empty($venta['anulacion'])): ?> · <?php echo date('d/m/Y',strtotime($venta['anulacion']['fecha'])); ?> · <?php echo htmlspecialchars($venta['anulacion']['motivo']); ?><?php endif; ?></div><?php endif; ?>
+
+<div class="row g-4 mb-4">
+ <div class="col-xl-8"><section class="card h-100"><div class="card-header"><div class="invoice-section-title"><i class="bi bi-file-earmark-text"></i><span>Datos del comprobante</span></div></div><div class="card-body"><dl class="sale-data-grid mb-0">
+  <div><dt>Tipo</dt><dd><?php echo htmlspecialchars($venta['tipo_documento']); ?></dd></div><div><dt>Serie y número</dt><dd><?php echo htmlspecialchars($venta['serie'].'-'.$venta['numero']); ?></dd></div><div><dt>Fecha de emisión</dt><dd><?php echo date('d/m/Y',strtotime($venta['fecha'])); ?></dd></div><div><dt>Cliente</dt><dd><?php echo htmlspecialchars($clientes[$venta['cliente_id']]??'Cliente no disponible'); ?></dd></div><div><dt>Vendedor</dt><dd><?php echo htmlspecialchars($venta['vendedor']??'Administrador'); ?></dd></div><div><dt>Operación</dt><dd><?php echo htmlspecialchars($venta['tipo_operacion']??'Venta interna'); ?></dd></div><div><dt>Moneda</dt><dd><?php echo htmlspecialchars($venta['moneda']??'PEN'); ?></dd></div><div><dt>Almacén</dt><dd><?php echo htmlspecialchars($almacenes[$venta['almacen_id']]??'Almacén no disponible'); ?></dd></div>
+ </dl></div></section></div>
+ <div class="col-xl-4"><section class="card sale-totals h-100"><div class="card-header"><div class="invoice-section-title"><i class="bi bi-calculator"></i><span>Totales</span></div></div><div class="card-body"><div><span>Subtotal</span><strong><?php echo format_money($venta['subtotal']); ?></strong></div><div><span>IGV (18%)</span><strong><?php echo format_money($venta['igv']); ?></strong></div><div class="sale-grand-total"><span>Total</span><strong><?php echo format_money($venta['total']); ?></strong></div></div></section></div>
+</div>
+
+<section class="card mb-4"><div class="card-header d-flex justify-content-between align-items-center"><div class="invoice-section-title"><i class="bi bi-list-check"></i><span>Detalle de productos</span></div><small class="text-muted">Precio comercial de la venta</small></div><div class="table-responsive"><table class="table align-middle mb-0"><thead><tr><th>Producto</th><th>Unidad</th><th class="text-end">Cantidad</th><th class="text-end">Precio venta</th><th class="text-end">Descuento</th><th class="text-end">Subtotal</th></tr></thead><tbody>
+<?php foreach($venta['detalles'] as $line): ?><tr><td><strong><?php echo htmlspecialchars($getProdName($line['producto_id'])); ?></strong></td><td><?php echo htmlspecialchars($line['unidad_medida']??'UN'); ?></td><td class="text-end"><?php echo $line['cantidad']; ?></td><td class="text-end"><?php echo format_money($line['precio_unitario']); ?></td><td class="text-end"><?php echo number_format((float)($line['descuento']??0),2); ?>%</td><td class="text-end fw-bold"><?php echo format_money($line['subtotal']); ?></td></tr><?php endforeach; ?>
+</tbody></table></div></section>
+
+<section class="card mb-4"><div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2"><div class="invoice-section-title"><i class="bi bi-box-arrow-up"></i><span>Inventario y Kardex</span></div><a href="<?php echo url('pages/inventario/kardex.php?venta_id='.$venta['id']); ?>" class="btn btn-sm btn-outline-primary">Ver movimiento en Kardex</a></div><div class="card-body"><div class="inventory-impact-summary"><div><small>Almacén</small><strong><?php echo htmlspecialchars($almacenes[$venta['almacen_id']]??'No disponible'); ?></strong></div><div><small>Cantidad despachada</small><strong><?php echo $totalDespachado; ?></strong></div><div><small>Cantidad pendiente</small><strong><?php echo $totalPendiente; ?></strong></div><div><small>Costo de salida</small><strong><?php echo format_money($venta['costo_ventas_total']??0); ?></strong></div></div><p class="small text-muted mt-3 mb-0"><i class="bi bi-info-circle me-1"></i>El precio de venta es comercial. La salida del Kardex utiliza automáticamente el CPP vigente registrado en cada despacho.</p></div></section>
+
 <?php include '../../includes/dispatch_panel.php'; ?>
-<div class="card shadow mb-4 border-left-warning">
-    <div class="card-header py-3 bg-warning bg-opacity-75 text-dark">
-        <h6 class="m-0 font-weight-bold"><i class="bi bi-1-circle"></i> VENTA REGISTRADA</h6>
-    </div>
-    <div class="card-body">
-        <div class="row">
-            <div class="col-md-6">
-                <p><strong>Cliente:</strong> <?php echo htmlspecialchars($getCliName($venta['cliente_id'])); ?></p>
-                <p><strong>Documento:</strong> <?php echo htmlspecialchars($venta['tipo_documento'] . ' ' . $venta['serie'] . '-' . $venta['numero']); ?></p>
-                <p><strong>Fecha:</strong> <?php echo date('d/m/Y', strtotime($venta['fecha'])); ?></p>
-            </div>
-            <div class="col-md-6 text-end">
-                <h4 class="text-success fw-bold">TOTAL INGRESO: <?php echo format_money($venta['total']); ?></h4>
-                <p class="text-muted mb-0">Subtotal: <?php echo format_money($venta['subtotal']); ?> | IGV: <?php echo format_money($venta['igv']); ?></p>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Flujo Visual -->
-<?php if (!empty($venta['impacto_simulacion'])): ?>
-<h3 class="h5 mt-4">Salida registrada al confirmar la venta</h3>
-<?php endif; ?>
-<div class="text-center my-3">
-    <i class="bi bi-arrow-down fs-1 text-secondary"></i>
-</div>
-
-<?php foreach($venta['impacto_simulacion'] as $impacto): ?>
-    <div class="row mb-5">
-        <div class="col-12 mb-2">
-            <h5 class="fw-bold text-primary">Producto: <?php echo htmlspecialchars($getProdName($impacto['producto_id'])); ?></h5>
-        </div>
-        
-        <!-- Paso 2: Salida Inventario -->
-        <div class="col-md-4">
-            <div class="card shadow h-100 border-left-danger">
-                <div class="card-header py-3 bg-danger text-white">
-                    <h6 class="m-0 font-weight-bold"><i class="bi bi-2-circle"></i> SALIDA DE INVENTARIO</h6>
-                </div>
-                <div class="card-body">
-                    <p class="mb-1">Stock anterior: <strong><?php echo $impacto['stock_anterior']; ?></strong></p>
-                    <p class="mb-1 text-danger fw-bold">- <?php echo $impacto['cantidad_vendida']; ?> despachados</p>
-                    <hr>
-                    <h5 class="text-danger text-center">Nuevo Stock: <?php echo $impacto['nuevo_stock']; ?></h5>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Paso 3: Movimiento Kardex -->
-        <div class="col-md-4">
-            <div class="card shadow h-100 border-left-info">
-                <div class="card-header py-3 bg-info text-white">
-                    <h6 class="m-0 font-weight-bold"><i class="bi bi-3-circle"></i> MOVIMIENTO EN KARDEX</h6>
-                </div>
-                <div class="card-body text-center">
-                    <i class="bi bi-file-earmark-spreadsheet fs-1 text-info mb-3 d-block"></i>
-                    <p>Se insertó una fila en el Kardex indicando una <strong>SALIDA</strong> de <?php echo $impacto['cantidad_vendida']; ?> unidades.</p>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Paso 4: Costo de Ventas -->
-        <div class="col-md-4">
-            <div class="card shadow h-100 border-left-primary bg-primary bg-opacity-10">
-                <div class="card-header py-3 bg-primary text-white">
-                    <h6 class="m-0 font-weight-bold"><i class="bi bi-4-circle"></i> COSTO DE VENTAS (CPP)</h6>
-                </div>
-                <div class="card-body" style="font-size: 0.9rem;">
-                    <div class="alert alert-light border shadow-sm text-center p-2 mb-3">
-                        <small>La salida utiliza el CPP vigente sin alterarlo.</small>
-                    </div>
-                    <div class="d-flex justify-content-between mb-1">
-                        <span>Cant. Vendida:</span>
-                        <span><?php echo $impacto['cantidad_vendida']; ?></span>
-                    </div>
-                    <div class="d-flex justify-content-between mb-1">
-                        <span>× CPP Vigente:</span>
-                        <span>S/ <?php echo number_format($impacto['cpp_vigente'], 2); ?></span>
-                    </div>
-                    <hr class="my-1">
-                    <div class="text-center mt-3">
-                        <small class="text-muted d-block mb-1">Costo de Ventas Reconocido:</small>
-                        <h4 class="text-primary-emphasis fw-bold"><?php echo format_money($impacto['costo_venta_linea']); ?></h4>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-<?php endforeach; ?>
-
-<div class="row mt-4 mb-5">
-    <div class="col-md-6 offset-md-3">
-        <div class="card bg-dark text-white text-center shadow">
-            <div class="card-body py-4">
-                <h5 class="mb-3">RESUMEN FINANCIERO DE LA VENTA</h5>
-                <div class="d-flex justify-content-around">
-                    <div>
-                        <div class="text-white-50 small">Ingreso Total</div>
-                        <div class="fs-4 text-success"><?php echo format_money($venta['total']); ?></div>
-                    </div>
-                    <div>
-                        <div class="text-white-50 small">Costo de Mercadería</div>
-                        <div class="fs-4 text-danger"><?php echo format_money($venta['costo_ventas_total']); ?></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="text-center mt-4">
-    <a href="<?php echo url('pages/ventas/documento.php?id=' . $venta['id']); ?>" target="_blank" class="btn btn-secondary btn-lg me-2">
-        <i class="bi bi-printer"></i> Ver Documento Impreso
-    </a>
-    <a href="<?php echo url('pages/inventario/index.php'); ?>" class="btn btn-primary btn-lg">
-        Ir a Verificar Inventario <i class="bi bi-arrow-right"></i>
-    </a>
-</div>
 
 <?php include '../../includes/sale_finance_panel.php'; ?>
+<div class="row g-4 mt-1 mb-4"><div class="col-lg-7"><section class="card future-billing-card h-100"><div class="card-header"><div class="invoice-section-title"><i class="bi bi-cloud-check"></i><span>Facturación electrónica</span></div><a href="<?php echo url('pages/sunat/documentos.php'); ?>" class="btn btn-sm btn-outline-primary">Ver módulo SUNAT</a></div><div class="card-body"><div class="d-flex justify-content-between align-items-center mb-3"><span>Estado SUNAT</span><span class="sunat-status"><i class="bi bi-tools"></i>En desarrollo</span></div><p class="small text-muted">Módulo preparado para la futura integración con SUNAT. El estado tributario no modifica el inventario ni el Kardex.</p><div class="future-actions"><button disabled>Generar XML</button><button disabled>Firmar XML</button><button disabled>Enviar a SUNAT</button><button disabled>Consultar CDR</button></div></div></section></div>
+<div class="col-lg-5"><section class="card h-100"><div class="card-header"><div class="invoice-section-title"><i class="bi bi-file-earmark-minus"></i><span>Nota de crédito</span></div></div><div class="card-body"><button class="btn btn-outline-secondary w-100" disabled>Emitir nota de crédito · Próximamente</button><p class="small text-muted mt-3">Permitirá anulación tributaria, devolución, descuento o corrección.</p><div class="alert alert-warning mb-0"><strong>Anulación y devolución física son acciones distintas.</strong> Anular conserva el historial y no devuelve automáticamente la mercadería.</div></div></section></div></div>
 <?php include '../../includes/footer.php'; ?>

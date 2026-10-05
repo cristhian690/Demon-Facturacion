@@ -49,7 +49,7 @@ try {
     demo_check($product['id']>99 && get_data('almacenes')[0]['id']>99, 'Orphan historical references are never assigned to demo records');
     $sale = ['empresa_id'=>'1','form_token'=>'test','request_id'=>str_repeat('f',32),
         'cliente_id'=>(string)get_data('clientes')[0]['id'], 'almacen_id'=>(string)get_data('almacenes')[0]['id'],
-        'tipo_documento'=>'Factura','serie'=>'PRUEBA-VENTA','numero'=>'1','fecha'=>date('Y-m-d'),
+        'tipo_documento'=>'Factura','serie'=>'PRUEBA-VTA','numero'=>'1','fecha'=>date('Y-m-d'),
         'productos'=>[(string)$product['id']], 'cantidades'=>['2'], 'precios'=>['150'], 'descuentos'=>['0']];
     data_transaction(function () use ($sale) { return process_operation(true, $sale); });
     $stock = get_data('inventario')[0];

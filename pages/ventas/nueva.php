@@ -18,7 +18,7 @@ $almacenes = get_data('almacenes');
     <?php echo form_context(); ?>
     <div class="alert alert-danger d-none form-errors" role="alert"></div>
     <div class="card invoice-shell mb-4">
-        <div class="card-header"><div class="invoice-section-title"><i class="bi bi-file-earmark-text"></i><span>Cabecera del comprobante</span></div></div>
+        <div class="card-header"><div class="invoice-section-title"><i class="bi bi-1-circle"></i><span>Datos del comprobante</span></div></div>
         <div class="card-body">
             <div class="row g-3 mb-3">
                 <div class="col-md-6 col-xl-3"><label class="form-label">Empresa</label><input class="form-control readonly-field" value="<?php echo htmlspecialchars(get_empresa_activa()['nombre']); ?>" readonly></div>
@@ -27,23 +27,17 @@ $almacenes = get_data('almacenes');
                 <div class="col-md-3 col-xl-2"><label class="form-label">Serie <span class="text-danger">*</span></label><input type="text" class="form-control text-uppercase" name="serie" value="F001" maxlength="10" pattern="[A-Za-z0-9-]+" oninput="this.value=this.value.toUpperCase()" required></div>
                 <div class="col-md-3 col-xl-2"><label class="form-label">Número <span class="text-danger">*</span></label><input type="text" inputmode="numeric" class="form-control" name="numero" placeholder="000001" maxlength="12" pattern="[0-9]+" required></div>
             </div>
-            <div class="row g-3 mb-3">
-                <div class="col-md-6 col-xl-3"><label class="form-label">Fecha de emisión <span class="text-danger">*</span></label><input type="date" class="form-control" name="fecha" value="<?php echo date('Y-m-d'); ?>" required></div>
-                <div class="col-md-6 col-xl-3"><label for="paymentTerms" class="form-label">Condición de pago <span class="text-danger">*</span></label><select id="paymentTerms" name="condicion_pago" class="form-select" required><option value="contado">Contado</option><option value="credito">Crédito</option></select></div>
-                <div class="col-md-6 col-xl-3"><label for="dueDate" class="form-label">Fecha de vencimiento</label><input id="dueDate" name="fecha_vencimiento" type="date" class="form-control" disabled></div>
-                <div class="col-md-6 col-xl-3"><label class="form-label">Tipo de operación</label><select name="tipo_operacion" class="form-select"><option value="Venta interna">Venta interna</option><option value="Venta para exportación">Venta para exportación</option></select></div>
-            </div>
             <div class="row g-3">
+                <div class="col-md-6 col-xl-3"><label class="form-label">Fecha de emisión <span class="text-danger">*</span></label><input type="date" class="form-control" name="fecha" value="<?php echo date('Y-m-d'); ?>" required></div>
+                <div class="col-md-6 col-xl-3"><label class="form-label">Tipo de operación</label><select name="tipo_operacion" class="form-select"><option value="Venta interna">Venta interna</option><option value="Venta para exportación">Venta para exportación</option></select></div>
                 <div class="col-md-6 col-xl-3"><label class="form-label">Moneda</label><select name="moneda" id="saleCurrency" class="form-select"><option value="PEN">Soles (PEN)</option></select></div>
                 <div class="col-md-6 col-xl-3"><label class="form-label">Tipo de cambio</label><input type="number" id="exchangeRate" name="tipo_cambio" class="form-control readonly-field" value="1.000" min="0.001" step="0.001" readonly></div>
-                <div class="col-md-6 col-xl-3"><label class="form-label">Almacén de salida <span class="text-danger">*</span></label><select class="form-select" name="almacen_id" id="selectAlmacen" required><option value="">Seleccione almacén...</option><?php foreach($almacenes as $a): ?><option value="<?php echo $a['id']; ?>"><?php echo htmlspecialchars($a['nombre']); ?></option><?php endforeach; ?></select></div>
-                <div class="col-md-6 col-xl-3"><label for="deliveryMode" class="form-label">Entrega de mercadería</label><select id="deliveryMode" name="entrega" class="form-select"><option value="inmediata">Despachar al confirmar</option><option value="pendiente">Dejar pendiente de despacho</option></select></div>
             </div>
         </div>
     </div>
 
     <div class="card mb-4">
-        <div class="card-header"><div class="invoice-section-title"><i class="bi bi-person-vcard"></i><span>Cliente e información comercial</span></div></div>
+        <div class="card-header"><div class="invoice-section-title"><i class="bi bi-2-circle"></i><span>Cliente e información comercial</span></div></div>
         <div class="card-body">
             <div class="row g-3">
                 <div class="col-lg-6">
@@ -64,7 +58,7 @@ $almacenes = get_data('almacenes');
     <!-- Detalle de Productos -->
     <div class="card shadow mb-4">
         <div class="card-header py-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
-            <div class="invoice-section-title"><i class="bi bi-box-seam"></i><span>Productos o servicios</span></div>
+            <div><div class="invoice-section-title"><i class="bi bi-3-circle"></i><span>Productos y totales</span></div><small class="text-muted">El precio de venta lo defines aquí. El costo del Kardex se toma automáticamente del CPP vigente y no puede modificarse.</small></div>
             <div class="invoice-toolbar"><a class="btn btn-sm btn-outline-success" data-select-target="productos[]" href="<?php echo url('pages/productos/form.php'); ?>"><i class="bi bi-plus-circle me-1"></i>Crear producto</a><button type="button" class="btn btn-sm btn-primary" id="btnAgregarFila"><i class="bi bi-plus"></i>Agregar línea</button></div>
         </div>
         <div class="card-body">
@@ -127,11 +121,25 @@ $almacenes = get_data('almacenes');
         </div>
     </div>
     
-    <div class="alert alert-info dispatch-preview" aria-live="polite">Selecciona producto y almacén para consultar el stock.</div>
-    <div class="d-flex justify-content-end mb-5">
-        <button type="submit" class="btn btn-warning btn-lg fw-bold" id="btnConfirmarVenta">
-            <i class="bi bi-check-circle me-2"></i> Confirmar Venta
-        </button>
+    <div class="row g-4 mb-4">
+        <div class="col-lg-6"><div class="card h-100"><div class="card-header"><div class="invoice-section-title"><i class="bi bi-4-circle"></i><span>Entrega</span></div></div><div class="card-body row g-3">
+            <div class="col-md-6"><label class="form-label">Almacén de salida <span class="text-danger">*</span></label><select class="form-select" name="almacen_id" id="selectAlmacen" required><option value="">Seleccione almacén...</option><?php foreach($almacenes as $a): ?><option value="<?php echo $a['id']; ?>"><?php echo htmlspecialchars($a['nombre']); ?></option><?php endforeach; ?></select></div>
+            <div class="col-md-6"><label for="deliveryMode" class="form-label">Tipo de entrega</label><select id="deliveryMode" name="entrega" class="form-select"><option value="inmediata">Despachar al confirmar</option><option value="pendiente">Dejar pendiente de despacho</option></select></div>
+            <div class="col-12"><small class="text-muted"><i class="bi bi-info-circle me-1"></i>El inventario se descuenta únicamente cuando la mercadería se despacha.</small></div>
+        </div></div></div>
+        <div class="col-lg-6"><div class="card h-100"><div class="card-header"><div class="invoice-section-title"><i class="bi bi-5-circle"></i><span>Condición de pago</span></div></div><div class="card-body row g-3">
+            <div class="col-md-6"><label for="paymentTerms" class="form-label">Condición <span class="text-danger">*</span></label><select id="paymentTerms" name="condicion_pago" class="form-select" required><option value="contado">Contado</option><option value="credito">Crédito</option></select></div>
+            <div class="col-md-6"><label for="dueDate" class="form-label">Fecha de vencimiento</label><input id="dueDate" name="fecha_vencimiento" type="date" class="form-control" disabled></div>
+            <div class="col-12"><small class="text-muted"><i class="bi bi-info-circle me-1"></i>Las ventas a crédito aparecerán automáticamente en Cuentas por cobrar.</small></div>
+        </div></div></div>
+    </div>
+    <div class="card sale-impact-card mb-4">
+        <div class="card-header"><div class="invoice-section-title"><i class="bi bi-6-circle"></i><span>Resumen final e impacto de la operación</span></div></div>
+        <div class="card-body"><div class="alert alert-info dispatch-preview mb-3" aria-live="polite">Selecciona producto y almacén para consultar el stock.</div><div id="saleCostPreview" class="sale-cost-preview"><i class="bi bi-calculator"></i><span>El costo de salida del Kardex se calculará automáticamente usando el CPP vigente.</span></div></div>
+    </div>
+    <div class="sale-submit-bar mb-5">
+        <div><small>Revisa el comprobante antes de continuar</small><strong>La confirmación registrará la venta y, si corresponde, el despacho.</strong></div>
+        <button type="submit" class="btn btn-warning fw-bold" id="btnConfirmarVenta"><i class="bi bi-check-circle me-2"></i>Confirmar venta</button>
     </div>
 
 </form>
@@ -225,6 +233,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 : `${option.textContent}: saldrán ${qty} ${option.dataset.unit}; quedarán ${stockInput.dataset.ready === 'true' ? remaining : 'por consultar'}.`);
         });
         preview.textContent = messages.join(' ') || 'Selecciona producto y almacén para consultar el stock.';
+        const costPreview = document.getElementById('saleCostPreview');
+        const costLines = [];
+        filas.forEach(fila => {
+            const option = fila.querySelector('.producto-select').selectedOptions[0];
+            const stockInput = fila.querySelector('.hidden-stock');
+            if (!option?.value || stockInput.dataset.ready !== 'true') return;
+            const price = Number(fila.querySelector('.txt-precio').value || 0);
+            const cpp = Number(stockInput.dataset.cpp || 0);
+            costLines.push(`${option.textContent}: precio de venta S/ ${price.toFixed(2)} · costo Kardex actual S/ ${cpp.toFixed(2)}.`);
+        });
+        costPreview.querySelector('span').textContent = costLines.join(' ') || 'El costo de salida del Kardex se calculará automáticamente usando el CPP vigente.';
         form.dataset.stockValid = String(valid && messages.length > 0);
         document.getElementById('btnConfirmarVenta').disabled = !valid || form.dataset.processing === 'true';
     }
@@ -256,6 +275,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             hiddenStock.value = data.stock;
             hiddenStock.dataset.ready = 'true';
+            hiddenStock.dataset.cpp = data.cpp;
             lblStock.textContent = data.stock + ' ' + data.unidad_medida;
             
             if (data.stock <= 0) {

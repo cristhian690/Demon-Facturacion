@@ -25,16 +25,18 @@ try {
 }
 $inventario = get_data('inventario');
 $stock = 0;
+$cpp = 0;
 
 foreach ($inventario as $inv) {
     if ($inv['producto_id'] == $producto_id && 
         $inv['almacen_id'] == $almacen_id && 
         $inv['empresa_id'] == $empresa_id) {
         $stock = $inv['stock_actual'];
+        $cpp = $inv['cpp'] ?? 0;
         break;
     }
 }
 
 ob_end_clean();
-echo json_encode(['stock' => $stock, 'unidad_medida'=>$product['unidad_medida'] ?? 'UN']);
+echo json_encode(['stock' => $stock, 'cpp'=>$cpp, 'unidad_medida'=>$product['unidad_medida'] ?? 'UN']);
 exit;

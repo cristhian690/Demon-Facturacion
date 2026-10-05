@@ -1,0 +1,5 @@
+<?php require_once '../../config.php'; require_once '../../includes/helpers.php'; include '../../includes/header.php'; ?>
+<div class="page-heading d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4"><div><span class="page-eyebrow">SUNAT / Documento futuro</span><h1 class="h3 mb-1">Nota de débito</h1><p class="text-muted mb-0">Información preliminar para futuros ajustes tributarios.</p></div><span class="future-label">Próximamente</span></div>
+<section class="card sunat-empty-feature mb-4"><div class="card-body"><i class="bi bi-file-earmark-plus"></i><h2>Incrementos del comprobante</h2><p>La nota de débito servirá para registrar ajustes que incrementen el importe del comprobante cuando corresponda.</p><span>No existe emisión ni cálculo tributario en este prototipo.</span><button class="btn btn-outline-secondary" disabled>Emitir nota de débito · Próximamente</button></div></section>
+<a class="btn btn-outline-primary" href="<?php echo url('pages/sunat/index.php'); ?>">Volver al módulo SUNAT</a>
+<?php include '../../includes/footer.php'; ?>

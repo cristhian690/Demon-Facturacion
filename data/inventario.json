@@ -51,9 +51,9 @@
         "producto_id": 4,
         "almacen_id": 2,
         "empresa_id": 1,
-        "stock_actual": 2,
+        "stock_actual": 0,
         "cpp": 100,
-        "valor_inventario": 200
+        "valor_inventario": 0
     },
     {
         "producto_id": 5,

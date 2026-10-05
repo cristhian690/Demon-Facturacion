@@ -52,7 +52,7 @@ function load_demo_data() {
             $purchase = process_operation(false, [
                 'empresa_id'=>(string)$company['id'], 'form_token'=>$_SESSION['form_token'], 'request_id'=>$requestId,
                 'proveedor_id'=>(string)$supplier['id'], 'almacen_id'=>(string)$warehouse['id'],
-                'tipo_documento'=>'Factura', 'serie'=>'PRUEBA', 'numero'=>'INICIAL-E' . $company['id'],
+                'tipo_documento'=>'Factura', 'serie'=>'PRUEBA', 'numero'=>(string)(900000 + (int)$company['id']),
                 'fecha'=>date('Y-m-d'), 'productos'=>array_column($products, 'id'),
                 'cantidades'=>['10','10'], 'costos'=>['100','50'], 'descuentos'=>['0','0']
             ]);

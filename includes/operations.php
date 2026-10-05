@@ -23,7 +23,7 @@ function process_operation($sale, $input) {
     foreach ($documents as $doc) if (($doc['request_id'] ?? '') === $request) return ['redirect' => url('pages/' . $table . '/detalle.php?id=' . $doc['id'])];
     owned_record($sale ? 'clientes' : 'proveedores', $input[$party] ?? '');
     $warehouse = owned_record('almacenes', $input['almacen_id'] ?? '');
-    if (($warehouse['estado'] ?? 'Activo') !== 'Activo') throw new InvalidArgumentException('El almacén está inactivo.');
+    if (($warehouse['estado'] ?? 'Activo') !== 'Activo') throw new InvalidArgumentException('El almacén "' . ($warehouse['nombre'] ?? '') . '" está inactivo. Selecciona otro almacén.');
     $doc = ['id' => next_id($table), 'empresa_id' => (int)$_SESSION['empresa_id'], $party => (int)$input[$party], 'almacen_id' => $warehouse['id'], 'request_id' => $request, 'detalles' => []];
     foreach (['tipo_documento','serie','numero','fecha'] as $key) $doc[$key] = input_text($input, $key, true);
     if (!valid_date($doc['fecha'])) throw new InvalidArgumentException('Fecha inválida.');
@@ -41,7 +41,7 @@ function process_operation($sale, $input) {
         $doc['vendedor'] = $_SESSION['usuario']['nombre'] ?? 'Administrador';
     }
     foreach ($documents as $old) {
-        if ($old['tipo_documento'] === $doc['tipo_documento'] && $old['serie'] === $doc['serie'] && $old['numero'] === $doc['numero'] && ($sale || $old[$party] == $doc[$party])) throw new InvalidArgumentException('Ese documento ya está registrado.');
+        if ($old['tipo_documento'] === $doc['tipo_documento'] && $old['serie'] === $doc['serie'] && $old['numero'] === $doc['numero'] && ($sale || $old[$party] == $doc[$party])) throw new InvalidArgumentException('El documento ' . $doc['serie'] . '-' . $doc['numero'] . ' ya está registrado.');
     }
     $priceField = $sale ? 'precios' : 'costos';
     $products = $input['productos'] ?? null;
@@ -49,16 +49,17 @@ function process_operation($sale, $input) {
     foreach (['cantidades', $priceField, 'descuentos'] as $key) if (!is_array($input[$key] ?? null) || array_keys($input[$key]) !== array_keys($products)) throw new InvalidArgumentException('El detalle está incompleto.');
     $inventory = get_data('inventario');
     $ledger = get_data('kardex');
-    $required = []; $lines = []; $subtotal = 0;
+    $required = []; $requiredNames = []; $lines = []; $subtotal = 0;
     foreach ($products as $i => $id) {
         $product = owned_record('productos', $id);
-        if (($product['estado'] ?? 'Activo') !== 'Activo') throw new InvalidArgumentException('El producto está inactivo.');
+        if (($product['estado'] ?? 'Activo') !== 'Activo') throw new InvalidArgumentException('El producto "' . ($product['nombre'] ?? $product['id']) . '" está inactivo.');
         $qty = quantity_value($input['cantidades'][$i], $product['unidad_medida'] ?? 'UN');
         $price = operation_number($input[$priceField][$i], 'precio/costo', 0.01, 100000000);
         $discount = operation_number($input['descuentos'][$i], 'descuento', 0, 100);
         $amount = round($qty * $price * (1 - $discount / 100), 2);
         $lines[] = ['producto_id' => $product['id'], 'unidad_medida'=>$product['unidad_medida'] ?? 'UN', 'cantidad' => $qty, 'precio' => $price, 'descuento' => $discount, 'subtotal' => $amount];
         $required[$product['id']] = ($required[$product['id']] ?? 0) + $qty;
+        $requiredNames[$product['id']] = $product['nombre'] ?? ('Producto '.$product['id']);
         $subtotal += $amount;
     }
     // Aggregate repeated products before changing any stock or ledger entry.
@@ -66,7 +67,7 @@ function process_operation($sale, $input) {
         $stock = 0; $matches = 0;
         foreach ($inventory as $inv) if ($inv['producto_id'] == $productId && $inv['almacen_id'] == $warehouse['id']) { $stock = $inv['stock_actual']; $matches++; }
         if ($matches > 1) throw new InvalidArgumentException('El inventario tiene registros duplicados para este producto y almacén. Revisa los datos antes de operar.');
-        if ($sale && $delivery === 'inmediata' && round($qty - $stock, 3) > 0) throw new InvalidArgumentException('Stock insuficiente para el producto ' . $productId . ': disponible ' . $stock . ', solicitado ' . $qty . '.');
+        if ($sale && $delivery === 'inmediata' && round($qty - $stock, 3) > 0) throw new InvalidArgumentException('Stock insuficiente para "' . $requiredNames[$productId] . '": disponible ' . $stock . ', solicitado ' . $qty . '.');
         // Historical snapshots cannot be recalculated safely by inserting backdated entries.
         if ($delivery === 'inmediata') foreach ($ledger as $movement) if ($movement['producto_id'] == $productId && $movement['almacen_id'] == $warehouse['id'] && substr($movement['fecha'], 0, 10) > $doc['fecha']) throw new InvalidArgumentException('La fecha es anterior al último movimiento de este producto y almacén.');
     }

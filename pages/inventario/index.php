@@ -1,92 +1,38 @@
 <?php
-require_once '../../config.php';
-require_once '../../includes/helpers.php';
-
-$inventario = get_data('inventario');
-$productos = get_data('productos');
-$almacenes = get_data('almacenes');
-
-// Helpers
-$getProd = function($id) use ($productos) {
-    foreach($productos as $p) { if ($p['id'] == $id) return $p; }
-    return null;
-};
-$getAlmName = function($id) use ($almacenes) {
-    foreach($almacenes as $a) { if ($a['id'] == $id) return $a['nombre']; }
-    return 'Desconocido';
-};
-
-// Filtrar por empresa activa
-$inventario_actual = array_filter($inventario, function($inv) {
-    return $inv['empresa_id'] == $_SESSION['empresa_id'];
-});
+require_once '../../config.php'; require_once '../../includes/helpers.php'; require_once '../../includes/inventory_view.php';
+$inventario=get_data('inventario'); $productos=get_data('productos'); $almacenes=get_data('almacenes'); $kardex=get_data('kardex');
+$qRaw=$_GET['q']??''; $productRaw=$_GET['producto_id']??''; $warehouseRaw=$_GET['almacen_id']??''; $stateRaw=$_GET['estado']??'';
+$q=is_string($qRaw)?trim($qRaw):''; $productoId=is_string($productRaw)?trim($productRaw):''; $almacenId=is_string($warehouseRaw)?trim($warehouseRaw):''; $estado=is_string($stateRaw)?trim($stateRaw):'';
+if($productoId!==''&&!ctype_digit($productoId))$productoId=''; if($almacenId!==''&&!ctype_digit($almacenId))$almacenId=''; if(!in_array($estado,['','disponible','bajo','sin_stock','inconsistente'],true))$estado='';
+$filas=inventory_view_rows($inventario,$productos,$almacenes,['q'=>$q,'producto_id'=>$productoId,'almacen_id'=>$almacenId,'estado'=>$estado]); $resumen=inventory_company_summary($inventario,$productos);
+$productoNombres=array_column($productos,'nombre','id'); $almacenNombres=array_column($almacenes,'nombre','id');
+$movimientos=array_values(array_filter($kardex,function($m)use($productoId,$almacenId){return ($productoId===''||(string)$m['producto_id']===$productoId)&&($almacenId===''||(string)$m['almacen_id']===$almacenId);}));
+usort($movimientos,fn($a,$b)=>strcmp($b['fecha'],$a['fecha']) ?: ((int)($b['id']??0)<=>(int)($a['id']??0))); $movimientos=array_slice($movimientos,0,6);
+include '../../includes/header.php';
 ?>
-<?php include '../../includes/header.php'; ?>
+<div class="page-heading d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4"><div><span class="page-eyebrow">Control de existencias</span><h1 class="h3 mb-1">Inventario actual</h1><p class="text-muted mb-0">Stock, costo promedio y valor por producto y almacén.</p></div><a class="btn btn-primary" href="<?php echo url('pages/inventario/kardex.php'); ?>"><i class="bi bi-journal-text me-1"></i>Consultar Kardex</a></div>
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="h3 text-gray-800">Inventario Actual</h2>
+<div class="inventory-summary mb-4">
+ <a href="?estado=disponible"><span class="inventory-summary-icon text-success"><i class="bi bi-check-circle"></i></span><span><small>Productos con stock</small><strong><?php echo $resumen['disponible']; ?></strong></span></a>
+ <a href="?estado=bajo"><span class="inventory-summary-icon text-warning"><i class="bi bi-exclamation-circle"></i></span><span><small>Stock bajo</small><strong><?php echo $resumen['bajo']; ?></strong></span></a>
+ <a href="?estado=sin_stock"><span class="inventory-summary-icon text-secondary"><i class="bi bi-x-circle"></i></span><span><small>Sin stock</small><strong><?php echo $resumen['sin_stock']; ?></strong></span></a>
+ <div><span class="inventory-summary-icon text-primary"><i class="bi bi-currency-dollar"></i></span><span><small>Valor total del inventario</small><strong><?php echo format_money($resumen['valor']); ?></strong></span></div>
 </div>
+<?php if($resumen['inconsistente']>0): ?><div class="alert alert-danger"><i class="bi bi-exclamation-triangle me-1"></i><strong><?php echo $resumen['inconsistente']; ?> producto(s) presentan stock acumulado negativo.</strong> Revisa sus movimientos; el sistema no modificará automáticamente estos saldos.</div><?php endif; ?>
 
-<div class="card shadow mb-4 border-top-primary">
-    <div class="card-header py-3 d-flex justify-content-between align-items-center bg-white">
-        <h6 class="m-0 font-weight-bold text-primary">Stock y Costos Promedio</h6>
-        <a class="btn btn-sm btn-primary" href="<?php echo url('pages/inventario/kardex.php'); ?>"><i class="bi bi-journal-text me-1"></i>Ver Kardex completo</a>
-    </div>
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover align-middle">
-                <thead class="table-light">
-                    <tr>
-                        <th>Producto</th>
-                        <th>Almacén</th>
-                        <th class="text-center">Stock Actual</th>
-                        <th class="text-end">Costo Promedio (CPP)</th>
-                        <th class="text-end">Valor Total</th>
-                        <th width="100" class="text-center">Kardex</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if (empty($inventario_actual)): ?>
-                        <tr><td colspan="5" class="text-center">No hay productos en inventario</td></tr>
-                    <?php else: ?>
-                        <?php foreach ($inventario_actual as $inv): 
-                            $prod = $getProd($inv['producto_id']);
-                            $producto_disponible = $prod !== null;
-                            if (!$prod) $prod = ['id' => $inv['producto_id'], 'sku' => '#' . $inv['producto_id'], 'nombre' => 'Producto pendiente de asignación', 'unidad_medida' => ''];
-                        ?>
-                            <tr>
-                                <td>
-                                    <strong><?php echo htmlspecialchars($prod['sku']); ?></strong> - 
-                                    <?php echo htmlspecialchars($prod['nombre']); ?>
-                                </td>
-                                <td><?php echo htmlspecialchars($getAlmName($inv['almacen_id'])); ?></td>
-                                <td class="text-center">
-                                    <span class="badge bg-<?php echo ($inv['stock_actual'] <= ($prod['stock_minimo'] ?? 0)) ? 'danger' : 'success'; ?> fs-6">
-                                        <?php echo $inv['stock_actual']; ?> <?php echo htmlspecialchars($prod['unidad_medida']); ?>
-                                    </span>
-                                </td>
-                                <td class="text-end text-warning-emphasis fw-bold">
-                                    <?php echo format_money($inv['cpp']); ?>
-                                </td>
-                                <td class="text-end fw-bold">
-                                    <?php echo format_money($inv['valor_inventario']); ?>
-                                </td>
-                                <td class="text-center">
-                                    <?php if ($producto_disponible): ?>
-                                    <a href="<?php echo url('pages/inventario/kardex.php?producto_id=' . $prod['id']); ?>" class="btn btn-sm btn-outline-info" title="Ver Movimientos">
-                                        <i class="bi bi-file-earmark-spreadsheet"></i>
-                                    </a>
-                                    <?php else: ?>
-                                    <a href="<?php echo url('pages/inventario/kardex.php'); ?>" class="btn btn-sm btn-outline-info">Historial</a>
-                                    <?php endif; ?>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
+<section class="card filter-card mb-4"><div class="card-body"><form method="get" class="row g-3 align-items-end">
+ <div class="col-lg-3"><label class="form-label">Buscar producto</label><input class="form-control" name="q" value="<?php echo htmlspecialchars($q); ?>" placeholder="Código o nombre"></div>
+ <div class="col-sm-6 col-lg-3"><label class="form-label">Producto</label><select class="form-select" name="producto_id"><option value="">Todos los productos</option><?php foreach($productos as $p): ?><option value="<?php echo $p['id']; ?>" <?php echo $productoId==(string)$p['id']?'selected':''; ?>><?php echo htmlspecialchars(($p['sku']??'').' - '.$p['nombre']); ?></option><?php endforeach; ?></select></div>
+ <div class="col-sm-6 col-lg-2"><label class="form-label">Almacén</label><select class="form-select" name="almacen_id"><option value="">Todos</option><?php foreach($almacenes as $a): ?><option value="<?php echo $a['id']; ?>" <?php echo $almacenId==(string)$a['id']?'selected':''; ?>><?php echo htmlspecialchars($a['nombre']); ?></option><?php endforeach; ?></select></div>
+ <div class="col-sm-6 col-lg-2"><label class="form-label">Estado de stock</label><select class="form-select" name="estado"><option value="">Todos</option><?php foreach(['disponible'=>'Disponible','bajo'=>'Stock bajo','sin_stock'=>'Sin stock','inconsistente'=>'Revisar'] as $key=>$label): ?><option value="<?php echo $key; ?>" <?php echo $estado===$key?'selected':''; ?>><?php echo $label; ?></option><?php endforeach; ?></select></div>
+ <div class="col-sm-6 col-lg-2 d-flex gap-2"><a class="btn btn-light" href="<?php echo url('pages/inventario/index.php'); ?>" title="Limpiar filtros"><i class="bi bi-x-lg"></i></a><button class="btn btn-primary flex-grow-1"><i class="bi bi-search me-1"></i>Filtrar</button></div>
+</form></div></section>
 
+<section class="card mb-4"><div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2"><div><span class="chart-kicker">Detalle por ubicación</span><h2 class="h6 mb-0">Stock por producto y almacén</h2></div><span class="text-muted small"><?php echo count($filas); ?> saldo(s)</span></div><div class="table-responsive"><table class="table inventory-table align-middle mb-0"><thead><tr><th>Producto</th><th>Código</th><th>Almacén</th><th class="text-end">Stock actual</th><th>Unidad</th><th class="text-end">CPP</th><th class="text-end">Valor inventario</th><th>Estado</th><th>Producto</th><th class="text-end">Acciones</th></tr></thead><tbody>
+<?php if(!$filas): ?><tr><td colspan="10" class="empty-state"><i class="bi bi-boxes"></i><strong>No hay saldos con estos filtros</strong><span>Prueba otra combinación de producto, almacén o estado.</span></td></tr><?php endif; ?>
+<?php foreach($filas as $fila): $p=$fila['_product'];$a=$fila['_warehouse'];$s=$fila['_status']; ?><tr class="<?php echo $s['key']==='inconsistente'?'inventory-inconsistent':''; ?>"><td><strong><?php echo htmlspecialchars($p['nombre']??'Producto pendiente de asignación'); ?></strong></td><td><code><?php echo htmlspecialchars($p['sku']??'#'.$fila['producto_id']); ?></code></td><td><span class="warehouse-label"><i class="bi bi-shop"></i><?php echo htmlspecialchars($a['nombre']??'Almacén no disponible'); ?></span></td><td class="text-end"><strong><?php echo $fila['stock_actual']; ?></strong></td><td><?php echo htmlspecialchars($p['unidad_medida']??''); ?></td><td class="text-end fw-semibold"><?php echo format_money($fila['cpp']); ?></td><td class="text-end fw-bold"><?php echo format_money($fila['valor_inventario']); ?></td><td><span class="stock-state stock-<?php echo $s['key']; ?>"><?php echo $s['label']; ?></span></td><td><?php if(!$p): ?><span class="badge text-bg-warning">No disponible</span><?php elseif(($p['estado']??'Activo')==='Activo'): ?><span class="badge text-bg-light border">Activo</span><?php else: ?><span class="badge text-bg-secondary">Inactivo</span><?php endif; ?></td><td class="text-end text-nowrap"><?php if($p): ?><a href="<?php echo url('pages/productos/form.php?id='.$p['id']); ?>" class="btn btn-sm btn-light" title="Ver producto"><i class="bi bi-box"></i></a><?php endif; ?><a href="<?php echo url('pages/inventario/kardex.php?producto_id='.$fila['producto_id'].'&almacen_id='.$fila['almacen_id']); ?>" class="btn btn-sm btn-outline-primary" title="Ver Kardex"><i class="bi bi-journal-text"></i><span class="d-none d-xl-inline ms-1">Ver Kardex</span></a></td></tr><?php endforeach; ?>
+</tbody></table></div><div class="inventory-formula"><i class="bi bi-calculator"></i><span><strong>Valor actual = stock actual × CPP.</strong> El CPP se actualiza automáticamente con las compras y se utiliza como costo de salida en el Kardex; no se edita desde Inventario.</span></div></section>
+
+<div class="row g-4 mb-4"><div class="col-xl-8"><section class="card h-100"><div class="card-header d-flex justify-content-between align-items-center"><div><span class="chart-kicker">Fuente: Kardex valorizado</span><h2 class="h6 mb-0">Movimientos recientes</h2></div><a href="<?php echo url('pages/inventario/kardex.php?producto_id='.urlencode($productoId).'&almacen_id='.urlencode($almacenId)); ?>" class="btn btn-sm btn-outline-primary">Ver todos</a></div><div class="table-responsive"><table class="table table-sm align-middle mb-0"><thead><tr><th>Fecha</th><th>Producto</th><th>Almacén</th><th>Movimiento</th><th>Documento</th><th class="text-end">Entrada</th><th class="text-end">Salida</th></tr></thead><tbody><?php if(!$movimientos): ?><tr><td colspan="7" class="text-center py-4 text-muted">No hay movimientos para los filtros seleccionados.</td></tr><?php endif; ?><?php foreach($movimientos as $m): ?><tr><td><?php echo date('d/m/Y',strtotime($m['fecha'])); ?></td><td><?php echo htmlspecialchars($productoNombres[$m['producto_id']]??'Producto #'.$m['producto_id']); ?></td><td><?php echo htmlspecialchars($almacenNombres[$m['almacen_id']]??'Almacén #'.$m['almacen_id']); ?></td><td><span class="badge text-bg-light border"><?php echo htmlspecialchars($m['tipo_operacion']); ?></span></td><td><?php echo htmlspecialchars($m['documento']); ?></td><td class="text-end text-success"><?php echo ($m['entrada_cantidad']??0)>0?$m['entrada_cantidad']:''; ?></td><td class="text-end text-danger"><?php echo ($m['salida_cantidad']??0)>0?$m['salida_cantidad']:''; ?></td></tr><?php endforeach; ?></tbody></table></div></section></div>
+<div class="col-xl-4"><section class="card inventory-connections mb-4"><div class="card-header"><h2 class="h6 mb-0">Cómo cambia el inventario</h2></div><div class="card-body"><p><i class="bi bi-cart-plus"></i><span><strong>Compras</strong> generan entradas y actualizan el CPP.</span></p><p><i class="bi bi-truck"></i><span><strong>Ventas</strong> descuentan al confirmar una entrega inmediata o al registrar cada despacho.</span></p><p><i class="bi bi-arrow-counterclockwise"></i><span><strong>Devoluciones físicas</strong> reingresan usando el costo del despacho original.</span></p></div></section><section class="card transfer-future"><div class="card-body"><div class="d-flex justify-content-between align-items-center mb-3"><div><span class="chart-kicker">Transferencias</span><h2 class="h6 mb-0">Entre almacenes</h2></div><span class="sidebar-badge">Próximamente</span></div><div class="transfer-flow"><span><small>Almacén origen</small><strong>Salida</strong></span><i class="bi bi-arrow-right"></i><span><small>Almacén destino</small><strong>Entrada</strong></span></div><p class="small text-muted mb-0">La futura operación conservará la trazabilidad sin crear ni eliminar existencias.</p></div></section></div></div>
 <?php include '../../includes/footer.php'; ?>

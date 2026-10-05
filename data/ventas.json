@@ -75,5 +75,75 @@
             }
         ],
         "costo_ventas_total": 800
+    },
+    {
+        "id": 3,
+        "empresa_id": 1,
+        "cliente_id": 3,
+        "almacen_id": 2,
+        "request_id": "e448030fad53d1bec04e46f00543abb1",
+        "detalles": [
+            {
+                "producto_id": 4,
+                "unidad_medida": "UN",
+                "cantidad": 2,
+                "subtotal": 20,
+                "descuento": 0,
+                "despachado": 2,
+                "precio_unitario": 10,
+                "costo_venta_unitario": 100,
+                "costo_venta_total": 200
+            }
+        ],
+        "tipo_documento": "Factura",
+        "serie": "F001",
+        "numero": "0012",
+        "fecha": "2026-10-06",
+        "tipo_operacion": "Venta interna",
+        "moneda": "PEN",
+        "tipo_cambio": 1,
+        "orden_compra": "",
+        "observacion": "",
+        "vendedor": "Administrador",
+        "subtotal": 20,
+        "igv": 3.6,
+        "total": 23.6,
+        "impacto_simulacion": [
+            {
+                "producto_id": 4,
+                "stock_anterior": 2,
+                "cpp_anterior": 100,
+                "cpp_vigente": 100,
+                "cantidad_vendida": 2,
+                "cantidad_comprada": 2,
+                "precio_venta": 10,
+                "costo_compra": 100,
+                "nuevo_stock": 0,
+                "nuevo_cpp": 100,
+                "costo_venta_linea": 200
+            }
+        ],
+        "costo_ventas_total": 200,
+        "entrega": "inmediata",
+        "despachos": [
+            {
+                "request_id": "e448030fad53d1bec04e46f00543abb1",
+                "fecha": "2026-10-06",
+                "detalles": [
+                    {
+                        "linea": 0,
+                        "producto_id": 4,
+                        "cantidad": 2,
+                        "costo_unitario": 100,
+                        "costo_total": 200
+                    }
+                ],
+                "origen": "Confirmación de venta"
+            }
+        ],
+        "condicion_pago": "contado",
+        "fecha_vencimiento": "",
+        "estado_documento": "Vigente",
+        "devoluciones": []
     }
 ]

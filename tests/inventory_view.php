@@ -1,0 +1,10 @@
+<?php
+require __DIR__.'/../includes/inventory_view.php';
+$checks=0; function inv_ok($value,$label){global $checks;if(!$value)throw new RuntimeException($label);$checks++;}
+$products=[['id'=>1,'sku'=>'A','nombre'=>'Arena','stock_minimo'=>5,'estado'=>'Activo'],['id'=>2,'sku'=>'B','nombre'=>'Bloque','stock_minimo'=>2,'estado'=>'Activo'],['id'=>3,'sku'=>'C','nombre'=>'Cemento','stock_minimo'=>0,'estado'=>'Activo'],['id'=>4,'sku'=>'X','nombre'=>'Inactivo','stock_minimo'=>0,'estado'=>'Inactivo']];
+$warehouses=[['id'=>1,'nombre'=>'Principal'],['id'=>2,'nombre'=>'Secundario']];
+$inventory=[['producto_id'=>1,'almacen_id'=>1,'stock_actual'=>8,'cpp'=>10,'valor_inventario'=>80],['producto_id'=>1,'almacen_id'=>2,'stock_actual'=>2,'cpp'=>10,'valor_inventario'=>20],['producto_id'=>2,'almacen_id'=>1,'stock_actual'=>1,'cpp'=>4,'valor_inventario'=>4],['producto_id'=>3,'almacen_id'=>1,'stock_actual'=>0,'cpp'=>8,'valor_inventario'=>0],['producto_id'=>4,'almacen_id'=>1,'stock_actual'=>-1,'cpp'=>5,'valor_inventario'=>-5]];
+inv_ok(inventory_row_status(10,5)['key']==='disponible','available status'); inv_ok(inventory_row_status(2,5)['key']==='bajo','low status'); inv_ok(inventory_row_status(0,0)['key']==='sin_stock','empty status'); inv_ok(inventory_row_status(-1,0)['key']==='inconsistente','negative status');
+$summary=inventory_company_summary($inventory,$products); inv_ok($summary['disponible']===1&&$summary['bajo']===1&&$summary['sin_stock']===1,'summary by accumulated product'); inv_ok($summary['valor']===99.0,'stored inventory value summed');
+inv_ok(count(inventory_view_rows($inventory,$products,$warehouses,['producto_id'=>'1']))===2,'product filter keeps warehouses separate'); inv_ok(count(inventory_view_rows($inventory,$products,$warehouses,['almacen_id'=>'2']))===1,'warehouse filter'); inv_ok(count(inventory_view_rows($inventory,$products,$warehouses,['estado'=>'bajo']))===2,'row status filter'); inv_ok(count(inventory_view_rows($inventory,$products,$warehouses,['q'=>'blo']))===1,'code or name search');
+echo "OK: $checks verificaciones de vista de inventario.\n";
