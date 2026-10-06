@@ -1,2 +1,3 @@
 /data/.write.lock
 /data/.pending-*
+/data_backup_*/

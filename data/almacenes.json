@@ -1,24 +1,58 @@
 [
     {
         "id": 1,
+        "empresa_id": 1,
         "nombre": "Almacén Principal",
-        "ubicacion": "Sede Central",
+        "ubicacion": "Sede principal - Demo",
         "estado": "Activo"
     },
     {
-        "nombre": "PRUEBA Almacén E1",
-        "ubicacion": "Ubicación ficticia PRUEBA",
-        "estado": "Activo",
         "id": 2,
         "empresa_id": 1,
-        "demo_key": "demo-v1-warehouse"
+        "nombre": "Almacén Secundario",
+        "ubicacion": "Sede complementaria - Demo",
+        "estado": "Activo"
     },
     {
-        "nombre": "PRUEBA Almacén E2",
-        "ubicacion": "Ubicación ficticia PRUEBA",
-        "estado": "Activo",
         "id": 3,
         "empresa_id": 2,
-        "demo_key": "demo-v1-warehouse"
+        "nombre": "Almacén Central",
+        "ubicacion": "Sede principal - Andina",
+        "estado": "Activo"
+    },
+    {
+        "id": 4,
+        "empresa_id": 2,
+        "nombre": "Almacén Norte",
+        "ubicacion": "Sede complementaria - Andina",
+        "estado": "Activo"
+    },
+    {
+        "id": 5,
+        "empresa_id": 3,
+        "nombre": "Almacén Principal",
+        "ubicacion": "Sede principal - Sur",
+        "estado": "Activo"
+    },
+    {
+        "id": 6,
+        "empresa_id": 3,
+        "nombre": "Almacén Sur",
+        "ubicacion": "Sede complementaria - Sur",
+        "estado": "Activo"
+    },
+    {
+        "id": 7,
+        "empresa_id": 4,
+        "nombre": "Almacén Central",
+        "ubicacion": "Sede principal - Pacífico",
+        "estado": "Activo"
+    },
+    {
+        "id": 8,
+        "empresa_id": 4,
+        "nombre": "Almacén Auxiliar",
+        "ubicacion": "Sede complementaria - Pacífico",
+        "estado": "Activo"
     }
 ]

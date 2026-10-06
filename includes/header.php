@@ -37,7 +37,7 @@
                             $emp_activa = get_empresa_activa();
                             ?>
                             <select name="empresa_id" class="form-select form-select-sm border-0 bg-light" onchange="this.form.submit()">
-                                <?php foreach($todas_empresas as $emp): ?>
+                                <?php foreach($todas_empresas as $emp): if (($emp['estado'] ?? 'Activo') !== 'Activo' && $emp['id'] != $emp_activa['id']) continue; ?>
                                     <option value="<?php echo $emp['id']; ?>" <?php echo ($emp['id'] == $emp_activa['id']) ? 'selected' : ''; ?>>
                                         <?php echo htmlspecialchars($emp['razon_social']); ?>
                                     </option>

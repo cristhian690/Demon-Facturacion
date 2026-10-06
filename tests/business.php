@@ -48,11 +48,12 @@ try {
     check(get_data('inventario')[0]['stock_actual'] == 5, 'Stock reduced exactly once');
     check(count(get_data('kardex')) === 2, 'One movement per line');
     check($sale['costo_ventas_total'] == 25 && get_data('inventario')[0]['cpp'] == 5, 'CPP separate from sale price');
+    check($sale['serie']==='F001'&&$sale['numero']==='000001','Factura series and number assigned automatically');
+    check($sale['fecha_emision']==='2026-09-17'&&preg_match('/^\d{2}:\d{2}:\d{2}$/',$sale['hora_emision']),'Historical emission date and time stored');
     $after = snapshot();
     check(data_transaction(function () use ($base) { return process_operation(true, $base); }) === $result, 'Retry returns same document');
     check(snapshot() === $after, 'Retry never writes twice');
-    $duplicate = $base; $duplicate['request_id'] = str_repeat('b',32);
-    rejected(function () use ($duplicate) { process_operation(true, $duplicate); }, 'Duplicate document rejected');
+    check(next_sale_document_number(get_data('ventas'),'Factura')==='000002'&&next_sale_document_number(get_data('ventas'),'Boleta')==='000001','Independent automatic numbering');
     $purchase = $base; $purchase['request_id'] = str_repeat('c',32); $purchase['productos']=['1']; $purchase['cantidades']=['5']; $purchase['costos']=['10']; $purchase['descuentos']=['20'];
     data_transaction(function () use ($purchase) { return process_operation(false, $purchase); });
     $inv = get_data('inventario')[0];

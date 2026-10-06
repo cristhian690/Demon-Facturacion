@@ -1,209 +1,73 @@
 <?php
 require_once '../../config.php';
 require_once '../../includes/helpers.php';
+require_once '../../includes/company_logos.php';
+require_once '../../includes/finance.php';
+require_once '../../includes/invoice_view.php';
 
-$id = $_GET['id'] ?? null;
-if (!$id) {
-    die("ID de venta no proporcionado.");
-}
-
-$ventas = get_data('ventas');
-$clientes = get_data('clientes');
-$productos = get_data('productos');
-$empresas = get_data('empresas');
-
-$venta = null;
-foreach ($ventas as $v) {
-    if ($v['id'] == $id && $v['empresa_id'] == $_SESSION['empresa_id']) {
-        $venta = $v;
-        break;
-    }
-}
-
-if (!$venta) {
-    die("Venta no encontrada.");
-}
-
-$cliente = ['nombre' => 'Cliente sin asignación disponible', 'tipo_documento' => 'Documento', 'numero_documento' => '-'];
-foreach ($clientes as $c) {
-    if ($c['id'] == $venta['cliente_id']) { $cliente = $c; break; }
-}
-
-$empresa = null;
-foreach ($empresas as $e) {
-    if ($e['id'] == $venta['empresa_id']) { $empresa = $e; break; }
-}
-
-$getProd = function($pid) use ($productos) {
-    foreach($productos as $p) { if ($p['id'] == $pid) return $p; }
-    return ['sku' => 'N/A', 'nombre' => 'Desconocido'];
-};
+try {
+    $venta=owned_record('ventas',$_GET['id']??'');
+    $cliente=owned_record('clientes',(string)$venta['cliente_id']);
+    $empresa=invoice_owner_company($venta,read_data('empresas'));
+} catch(Throwable $e) { http_response_code(404); exit('Comprobante no disponible en la empresa activa.'); }
+$productos=get_data('productos');
+$filas=invoice_product_rows($venta,$productos);
+$finanzas=sale_financials($venta);
+$entrega=invoice_delivery_summary($venta);
+$pagos_venta=invoice_sale_payments($venta,get_data('pagos'));
+$monto_letras=invoice_amount_words($venta['total'],$venta['moneda']??'PEN');
+$logo_url=company_logo_url($empresa);
+$tipo=invoice_electronic_name($venta);
+$numero=($venta['serie']??'').'-'.($venta['numero']??'');
 ?>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Documento Comercial - <?php echo $venta['serie'] . '-' . $venta['numero']; ?></title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    
-    <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: Arial, sans-serif;
-        }
-        .a4-container {
-            width: 210mm;
-            min-height: 297mm;
-            background: white;
-            margin: 20px auto;
-            padding: 20mm;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        .document-box {
-            border: 2px solid #000;
-            border-radius: 5px;
-            padding: 10px;
-            text-align: center;
-        }
-        .table-items th {
-            background-color: #f8f9fa;
-            border-bottom: 2px solid #000;
-        }
-        
-        @media print {
-            body { background: white; margin: 0; }
-            .a4-container {
-                width: 100%;
-                min-height: auto;
-                margin: 0;
-                padding: 15mm;
-                box-shadow: none;
-            }
-            .no-print { display: none !important; }
-        }
-    </style>
-</head>
-<body>
-
-    <!-- Botonera flotante (no imprimible) -->
-    <div class="container text-center mt-3 mb-2 no-print">
-        <button class="btn btn-primary" onclick="window.print()">
-            <i class="bi bi-printer"></i> Imprimir Documento
-        </button>
-        <button class="btn btn-secondary ms-2" onclick="window.close()">
-            <i class="bi bi-x-circle"></i> Cerrar
-        </button>
-    </div>
-
-    <!-- Contenedor del documento -->
-    <div class="a4-container">
-        
-        <!-- Cabecera -->
-        <div class="row mb-5">
-            <div class="col-7">
-                <h2 class="fw-bold mb-1 text-primary"><?php echo htmlspecialchars($empresa['razon_social']); ?></h2>
-                <p class="mb-0 text-muted">Soluciones empresariales integrales</p>
-                <div class="mt-3">
-                    <strong>Dirección:</strong> <?php echo htmlspecialchars($empresa['direccion'] ?? 'Av. Principal 123, Ciudad'); ?><br>
-                    <strong>Correo:</strong> <?php echo htmlspecialchars($empresa['correo'] ?? '-'); ?><br>
-                    <strong>Teléfono:</strong> <?php echo htmlspecialchars($empresa['telefono'] ?? '-'); ?>
-                </div>
-            </div>
-            <div class="col-5">
-                <div class="document-box">
-                    <h4 class="mb-2">RUC: <?php echo htmlspecialchars($empresa['ruc']); ?></h4>
-                    <h5 class="mb-2 text-uppercase fw-bold bg-light py-2 border-top border-bottom">
-                        <?php echo $venta['tipo_documento'] === 'Factura' ? 'FACTURA ELECTRÓNICA' : 'BOLETA DE VENTA ELECTRÓNICA'; ?>
-                    </h5>
-                    <h4 class="mb-0"><?php echo htmlspecialchars($venta['serie'] . ' - ' . $venta['numero']); ?></h4>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Datos del Cliente -->
-        <div class="border rounded p-3 mb-4">
-            <div class="row">
-                <div class="col-8">
-                    <strong>Cliente:</strong> <?php echo htmlspecialchars($cliente['nombre']); ?><br>
-                    <strong><?php echo htmlspecialchars($cliente['tipo_documento']); ?>:</strong> <?php echo htmlspecialchars($cliente['numero_documento']); ?><br>
-                    <strong>Dirección:</strong> <?php echo htmlspecialchars($cliente['direccion'] ?? '-'); ?>
-                </div>
-                <div class="col-4">
-                    <strong>Fecha de Emisión:</strong> <?php echo date('d/m/Y', strtotime($venta['fecha'])); ?><br>
-                    <strong>Vencimiento:</strong> <?php echo !empty($venta['fecha_vencimiento']) ? date('d/m/Y', strtotime($venta['fecha_vencimiento'])) : 'Contado'; ?><br>
-                    <strong>Moneda:</strong> <?php echo htmlspecialchars($venta['moneda'] ?? 'PEN'); ?><br>
-                    <strong>Condición:</strong> <?php echo htmlspecialchars(ucfirst($venta['condicion_pago'] ?? 'contado')); ?>
-                </div>
-            </div>
-        </div>
-
-        <?php if (!empty($venta['orden_compra']) || !empty($venta['observacion'])): ?>
-        <div class="border rounded p-3 mb-4">
-            <?php if (!empty($venta['orden_compra'])): ?><strong>Orden de compra:</strong> <?php echo htmlspecialchars($venta['orden_compra']); ?><br><?php endif; ?>
-            <?php if (!empty($venta['observacion'])): ?><strong>Observación:</strong> <?php echo nl2br(htmlspecialchars($venta['observacion'])); ?><?php endif; ?>
-        </div>
-        <?php endif; ?>
-        
-        <!-- Detalles -->
-        <table class="table table-items mb-4">
-            <thead>
-                <tr>
-                    <th width="80" class="text-center">Código</th>
-                    <th class="text-center">Cant.</th>
-                    <th class="text-center">U.M.</th>
-                    <th>Descripción</th>
-                    <th width="120" class="text-end">V. Unitario</th>
-                    <th width="120" class="text-end">Importe</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($venta['detalles'] as $det): 
-                    $prod = $getProd($det['producto_id']);
-                ?>
-                    <tr>
-                        <td class="text-center"><?php echo htmlspecialchars($prod['sku']); ?></td>
-                        <td class="text-center"><?php echo $det['cantidad']; ?></td>
-                        <td class="text-center"><?php echo htmlspecialchars($det['unidad_medida'] ?? 'UN'); ?></td>
-                        <td><?php echo htmlspecialchars($prod['nombre']); ?></td>
-                        <td class="text-end"><?php echo format_money($det['precio_unitario']); ?></td>
-                        <td class="text-end"><?php echo format_money($det['subtotal']); ?></td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-        
-        <!-- Totales -->
-        <div class="row justify-content-end mt-5">
-            <div class="col-5">
-                <table class="table table-sm table-borderless border">
-                    <tbody>
-                        <tr>
-                            <td class="fw-bold">Op. Gravadas:</td>
-                            <td class="text-end">S/ <?php echo number_format($venta['subtotal'], 2); ?></td>
-                        </tr>
-                        <tr>
-                            <td class="fw-bold">IGV (18%):</td>
-                            <td class="text-end">S/ <?php echo number_format($venta['igv'], 2); ?></td>
-                        </tr>
-                        <tr class="border-top bg-light">
-                            <td class="fw-bold fs-5">IMPORTE TOTAL:</td>
-                            <td class="text-end fw-bold fs-5">S/ <?php echo number_format($venta['total'], 2); ?></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        
-        <!-- Pie de página -->
-        <div class="mt-5 text-center text-muted border-top pt-3" style="font-size: 0.8rem;">
-            <p class="mb-0">Representación impresa de la <?php echo $venta['tipo_documento']; ?> Electrónica.</p>
-            <p class="mb-0">Documento generado por Fact-Kard.</p>
-        </div>
-        
-    </div>
-    
-</body>
-</html>
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title><?php echo htmlspecialchars($tipo.' '.$numero); ?></title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+<style>
+:root{--ink:#172033;--muted:#64748b;--line:#dce3ed;--soft:#f6f8fb;--accent:#2563eb}*{box-sizing:border-box}body{margin:0;color:var(--ink);background:#eef2f7;font-family:Arial,sans-serif;font-size:13px}.invoice-toolbar{display:flex;justify-content:center;gap:.55rem;flex-wrap:wrap;padding:18px}.invoice-sheet{width:210mm;min-height:297mm;margin:0 auto 28px;padding:14mm 15mm;background:#fff;box-shadow:0 18px 45px rgba(15,23,42,.12)}.invoice-header{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:24px;align-items:start;padding-bottom:18px;border-bottom:2px solid var(--ink)}.company-block{display:flex;align-items:flex-start;gap:15px;min-width:0}.company-logo{width:112px;height:84px;flex:0 0 112px;object-fit:contain;object-position:left top}.company-logo-fallback{display:grid;place-items:center;width:68px;height:68px;flex:0 0 68px;color:#64748b;border:1px solid var(--line);border-radius:12px;background:var(--soft);font-size:1.5rem}.company-copy{min-width:0}.company-copy h1{margin:0 0 3px;color:#1d4ed8;font-size:21px;line-height:1.2;overflow-wrap:anywhere}.company-copy .trade-name{margin-bottom:8px;color:var(--muted);font-size:12px}.company-copy p{margin:2px 0;color:#475569;font-size:11px}.document-identity{padding:15px;border:2px solid var(--ink);border-radius:12px;text-align:center}.document-identity small{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.08em}.document-identity h2{margin:5px 0;font-size:19px}.document-identity .ruc{font-weight:700}.document-identity .number{margin-top:8px;padding-top:8px;border-top:1px solid var(--line);font-size:18px;font-weight:800}.info-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:14px;margin-top:18px}.info-card{padding:14px;border:1px solid var(--line);border-radius:10px;break-inside:avoid}.section-title{margin:0 0 10px;color:#475569;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}.data-list{display:grid;grid-template-columns:130px 1fr;gap:5px 8px;margin:0}.data-list dt{color:var(--muted);font-weight:600}.data-list dd{margin:0;font-weight:600;overflow-wrap:anywhere}.status-strip{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}.status-card{padding:12px 14px;border-left:4px solid var(--accent);border-radius:8px;background:var(--soft);break-inside:avoid}.status-card strong{display:block;margin-bottom:6px}.status-values{display:flex;gap:16px;flex-wrap:wrap}.status-values span{color:var(--muted);font-size:11px}.status-values b{display:block;color:var(--ink);font-size:12px}.items-wrap{margin-top:15px;overflow-x:auto}.items{width:100%;border-collapse:collapse}.items th{padding:9px 7px;color:#475569;border-top:1px solid var(--line);border-bottom:2px solid var(--ink);background:var(--soft);font-size:9px;text-transform:uppercase;letter-spacing:.04em}.items td{padding:9px 7px;border-bottom:1px solid var(--line);vertical-align:top}.items code{color:#334155;font-size:10px}.summary{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:20px;margin-top:18px;align-items:start}.prototype-note{align-self:end;color:var(--muted);font-size:10px}.totals{border:1px solid var(--line);border-radius:10px;overflow:hidden;break-inside:avoid}.total-row{display:flex;justify-content:space-between;padding:8px 12px}.total-row.total{padding:12px;color:#fff;background:var(--ink);font-size:17px;font-weight:800}.payment-card{margin-top:14px;padding:14px;border:1px solid var(--line);border-radius:10px;break-inside:avoid}.payment-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.payment-grid span{color:var(--muted);font-size:10px}.payment-grid b{display:block;margin-top:2px;color:var(--ink);font-size:12px}.sunat-note{display:flex;justify-content:space-between;gap:12px;margin-top:16px;padding-top:12px;color:var(--muted);border-top:1px solid var(--line);font-size:10px}.page-break-safe{break-inside:avoid}@media(max-width:900px){body{background:#fff}.invoice-sheet{width:100%;min-height:0;margin:0;padding:22px;box-shadow:none}.invoice-header,.info-grid,.summary{grid-template-columns:1fr}.document-identity{max-width:360px}.status-strip{grid-template-columns:1fr}.items{min-width:720px}}@media(max-width:576px){.company-block{flex-direction:column}.company-logo{width:96px;height:68px}.data-list{grid-template-columns:1fr}.data-list dt{margin-top:4px}.payment-grid{grid-template-columns:1fr 1fr}.invoice-sheet{padding:15px}.sunat-note{flex-direction:column}}@page{size:A4;margin:10mm}@media print{body{background:#fff;font-size:11px}.invoice-toolbar{display:none!important}.invoice-sheet{width:auto;min-height:0;margin:0;padding:0;box-shadow:none}.invoice-header{grid-template-columns:minmax(0,1fr) 235px;gap:16px}.company-logo{width:98px;height:72px;flex-basis:98px}.items-wrap{overflow:visible}.items{min-width:0}.items thead{display:table-header-group}.items tr{break-inside:avoid}.info-card,.status-card,.totals,.payment-card{break-inside:avoid}.prototype-note,.sunat-note{font-size:9px}}
+.invoice-header{grid-template-columns:112px minmax(0,1fr) 250px;gap:16px}.company-logo,.company-logo-fallback{grid-column:1}.company-copy{grid-column:2}.document-identity{grid-column:3}.document-identity .prototype-label{margin-top:7px;color:#64748b;font-size:8px}.amount-words{margin-top:10px;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--soft);font-size:10px;font-weight:700}.payment-lines{margin:8px 0 0;padding-left:18px}.payment-lines li{margin:2px 0;color:#475569}.integration-grid{display:grid;grid-template-columns:1fr 116px;gap:14px;margin-top:14px;break-inside:avoid}.hash-box,.qr-box{padding:12px;border:1px solid var(--line);border-radius:9px}.hash-box strong,.hash-box span{display:block}.hash-box span{margin-top:5px;color:var(--muted);font-size:10px}.qr-box{display:grid;place-items:center;min-height:100px;color:#94a3b8;text-align:center;font-size:9px}.qr-box i{display:block;font-size:1.6rem}@media(max-width:900px){.invoice-header{grid-template-columns:90px 1fr}.company-logo,.company-logo-fallback{grid-column:1}.company-copy{grid-column:2}.document-identity{grid-column:1/-1}.integration-grid{grid-template-columns:1fr 110px}}@media(max-width:576px){.invoice-header{grid-template-columns:1fr}.company-logo,.company-logo-fallback,.company-copy,.document-identity{grid-column:1}.integration-grid{grid-template-columns:1fr}}@media print{.invoice-header{grid-template-columns:98px minmax(0,1fr) 225px}.company-logo,.company-logo-fallback{grid-column:1}.company-copy{grid-column:2}.document-identity{grid-column:3}}
+</style></head><body>
+<nav class="invoice-toolbar no-print" aria-label="Acciones del comprobante">
+<a class="btn btn-outline-secondary" href="<?php echo url('pages/ventas/detalle.php?id='.$venta['id']); ?>"><i class="bi bi-arrow-left me-1"></i>Volver al detalle</a>
+<a class="btn btn-primary" href="<?php echo url('actions/descargar_comprobante.php?id='.$venta['id']); ?>"><i class="bi bi-file-earmark-pdf me-1"></i>Descargar PDF</a>
+<a class="btn btn-outline-primary" href="<?php echo url('pages/inventario/kardex.php?venta_id='.$venta['id']); ?>"><i class="bi bi-journal-text me-1"></i>Ver Kardex</a>
+<a class="btn btn-outline-secondary" href="<?php echo url('pages/sunat/documentos.php'); ?>"><i class="bi bi-receipt me-1"></i>Ver módulo SUNAT</a>
+</nav>
+<main class="invoice-sheet">
+<header class="invoice-header">
+<?php if($logo_url): ?><img class="company-logo" src="<?php echo htmlspecialchars($logo_url); ?>" alt="Logo de <?php echo htmlspecialchars($empresa['razon_social']); ?>">
+<?php else: ?><div class="company-logo-fallback" aria-label="Empresa sin logo"><i class="bi bi-building"></i></div><?php endif; ?>
+<div class="company-copy"><h1><?php echo htmlspecialchars($empresa['razon_social']); ?></h1>
+<?php if(!empty($empresa['nombre_comercial'])): ?><div class="trade-name"><?php echo htmlspecialchars($empresa['nombre_comercial']); ?></div><?php endif; ?>
+<?php if(!empty($empresa['direccion'])): ?><p><i class="bi bi-geo-alt"></i> <?php echo htmlspecialchars($empresa['direccion']); ?></p><?php endif; ?>
+<?php if(!empty($empresa['telefono'])): ?><p><i class="bi bi-telephone"></i> <?php echo htmlspecialchars($empresa['telefono']); ?></p><?php endif; ?>
+<?php if(!empty($empresa['correo'])): ?><p><i class="bi bi-envelope"></i> <?php echo htmlspecialchars($empresa['correo']); ?></p><?php endif; ?></div>
+<div class="document-identity"><div class="ruc">RUC <?php echo htmlspecialchars($empresa['ruc']); ?></div><h2><?php echo htmlspecialchars($tipo); ?></h2><div class="number"><?php echo htmlspecialchars($numero); ?></div><div class="prototype-label">Documento generado por prototipo - sin envío SUNAT</div></div>
+</header>
+<section class="info-grid">
+<div class="info-card"><h3 class="section-title">Datos del cliente</h3><dl class="data-list">
+<dt><?php echo htmlspecialchars($cliente['tipo_documento']??'Documento'); ?></dt><dd><?php echo htmlspecialchars($cliente['numero_documento']??'-'); ?></dd>
+<dt>Cliente</dt><dd><?php echo htmlspecialchars($cliente['nombre']); ?></dd>
+<?php if(!empty($cliente['direccion'])): ?><dt>Dirección</dt><dd><?php echo htmlspecialchars($cliente['direccion']); ?></dd><?php endif; ?>
+<?php if(!empty($cliente['telefono'])): ?><dt>Teléfono</dt><dd><?php echo htmlspecialchars($cliente['telefono']); ?></dd><?php endif; ?>
+<?php if(!empty($cliente['correo'])): ?><dt>Correo</dt><dd><?php echo htmlspecialchars($cliente['correo']); ?></dd><?php endif; ?>
+</dl></div>
+<div class="info-card"><h3 class="section-title">Datos del comprobante</h3><dl class="data-list">
+<dt>Emisión</dt><dd><?php echo date('d/m/Y',strtotime(invoice_emission_date($venta))); ?><?php if(invoice_emission_time($venta)!==''): ?> · <?php echo htmlspecialchars(invoice_emission_time($venta)); ?><?php endif; ?></dd>
+<?php if(($venta['condicion_pago']??'contado')==='credito'&&!empty($venta['fecha_vencimiento'])): ?><dt>Vencimiento</dt><dd><?php echo date('d/m/Y',strtotime($venta['fecha_vencimiento'])); ?></dd><?php endif; ?>
+<dt>Condición</dt><dd><?php echo ($venta['condicion_pago']??'contado')==='credito'?'Crédito':'Contado'; ?></dd>
+<dt>Moneda</dt><dd><?php echo htmlspecialchars(($venta['moneda']??'PEN')==='USD'?'USD - Dólares estadounidenses':'PEN - Soles'); ?><?php if(($venta['moneda']??'PEN')==='USD'): ?> · T.C. <?php echo number_format((float)$venta['tipo_cambio'],3); ?><?php endif; ?></dd>
+<dt>Entrega</dt><dd><?php echo htmlspecialchars($entrega['tipo']); ?></dd><dt>Estado</dt><dd><?php echo htmlspecialchars($entrega['estado']); ?></dd>
+</dl></div></section>
+<section class="status-strip">
+<div class="status-card"><strong>Estado de pago: <?php echo htmlspecialchars($finanzas['estado']); ?></strong><div class="status-values"><span>Total<b><?php echo invoice_money($finanzas['cargo'],$venta['moneda']??'PEN'); ?></b></span><span>Pagado<b><?php echo invoice_money($finanzas['pagado'],$venta['moneda']??'PEN'); ?></b></span><?php if($finanzas['saldo']>0): ?><span>Saldo pendiente<b><?php echo invoice_money($finanzas['saldo'],$venta['moneda']??'PEN'); ?></b></span><?php endif; ?></div></div>
+<div class="status-card"><strong><?php echo htmlspecialchars($entrega['estado']); ?></strong><div class="status-values"><span>Solicitado<b><?php echo invoice_quantity($entrega['solicitado']); ?></b></span><span>Entregado<b><?php echo invoice_quantity($entrega['entregado']); ?></b></span><?php if($entrega['pendiente']>0): ?><span>Pendiente<b><?php echo invoice_quantity($entrega['pendiente']); ?></b></span><?php endif; ?></div></div>
+</section>
+<?php if(!empty($venta['orden_compra'])||!empty($venta['observacion'])): ?><section class="info-card page-break-safe"><h3 class="section-title">Información adicional</h3><?php if(!empty($venta['orden_compra'])): ?><strong>Orden de compra:</strong> <?php echo htmlspecialchars($venta['orden_compra']); ?><br><?php endif; ?><?php if(!empty($venta['observacion'])): ?><strong>Observación:</strong> <?php echo nl2br(htmlspecialchars($venta['observacion'])); ?><?php endif; ?></section><?php endif; ?>
+<div class="items-wrap"><table class="items"><thead><tr><th class="text-end">Cant.</th><th>U.M.</th><th>Cod.</th><th>Descripción</th><th class="text-end">P.Unit</th><th class="text-end">Dto.</th><th class="text-end">Total</th></tr></thead><tbody><?php echo render_invoice_product_rows($filas,$venta['moneda']??'PEN'); ?></tbody></table></div>
+<div class="amount-words">SON: <?php echo htmlspecialchars($monto_letras); ?></div>
+<section class="summary"><div class="prototype-note"><strong>Vendedor:</strong> <?php echo htmlspecialchars($venta['vendedor']??'Administrador'); ?></div><div class="totals"><div class="total-row"><span>Op. Gravadas</span><strong><?php echo invoice_money($venta['subtotal'],$venta['moneda']??'PEN'); ?></strong></div><div class="total-row"><span>IGV 18%</span><strong><?php echo invoice_money($venta['igv'],$venta['moneda']??'PEN'); ?></strong></div><div class="total-row total"><span>Total a pagar</span><span><?php echo invoice_money($venta['total'],$venta['moneda']??'PEN'); ?></span></div></div></section>
+<section class="payment-card"><h3 class="section-title">Condición de pago: <?php echo ($venta['condicion_pago']??'contado')==='credito'?'Crédito':'Contado'; ?></h3><div class="payment-grid"><span>Total<b><?php echo invoice_money($finanzas['cargo'],$venta['moneda']??'PEN'); ?></b></span><span>Pagado<b><?php echo invoice_money($finanzas['pagado'],$venta['moneda']??'PEN'); ?></b></span><?php if($finanzas['saldo']>0): ?><span>Saldo<b><?php echo invoice_money($finanzas['saldo'],$venta['moneda']??'PEN'); ?></b></span><?php endif; ?><span>Estado<b><?php echo htmlspecialchars($finanzas['estado']); ?></b></span></div><?php if($pagos_venta): ?><ul class="payment-lines"><?php foreach($pagos_venta as $pago): ?><li><?php echo htmlspecialchars($pago['medio']??'Pago'); ?> · <?php echo invoice_money($pago['importe'],$venta['moneda']??'PEN'); ?></li><?php endforeach; ?></ul><?php endif; ?></section>
+<section class="integration-grid"><div class="hash-box"><strong>Código Hash:</strong><span>Pendiente de integración SUNAT</span></div><div class="qr-box"><div><i class="bi bi-qr-code"></i>QR disponible con integración SUNAT</div></div></section>
+<footer class="sunat-note"><span>Representación del comprobante generado por Fact-Kard.</span><span>Documento generado por prototipo - sin envío SUNAT.</span></footer>
+</main></body></html>

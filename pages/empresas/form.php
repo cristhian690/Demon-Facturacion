@@ -1,6 +1,7 @@
 <?php
 require_once '../../config.php';
 require_once '../../includes/helpers.php';
+require_once '../../includes/company_logos.php';
 
 $id = $_GET['id'] ?? null;
 $empresas = get_data('empresas');
@@ -19,6 +20,7 @@ if ($id !== null && (!is_string($id) || !ctype_digit($id) || !$empresa)) {
     exit('Empresa no disponible.');
 }
 $is_edit = $empresa !== null;
+$logo_url = $is_edit ? company_logo_url($empresa) : null;
 ?>
 <?php include '../../includes/header.php'; ?>
 
@@ -31,7 +33,7 @@ $is_edit = $empresa !== null;
 
 <div class="card shadow mb-4">
     <div class="card-body">
-        <form action="<?php echo url('actions/guardar_empresa.php'); ?>" method="POST">
+        <form action="<?php echo url('actions/guardar_empresa.php'); ?>" method="POST" enctype="multipart/form-data">
             <?php echo form_context(); ?>
             <?php if ($is_edit): ?>
                 <input type="hidden" name="id" value="<?php echo $empresa['id']; ?>">
@@ -49,6 +51,9 @@ $is_edit = $empresa !== null;
                            value="<?php echo $is_edit ? htmlspecialchars($empresa['ruc']) : ''; ?>">
                 </div>
             </div>
+            <div class="row mb-3">
+                <div class="col-md-12"><label class="form-label">Nombre comercial</label><input type="text" class="form-control" name="nombre_comercial" value="<?php echo $is_edit ? htmlspecialchars($empresa['nombre_comercial'] ?? '') : ''; ?>"></div>
+            </div>
             
             <div class="row mb-3">
                 <div class="col-md-12">
@@ -58,21 +63,34 @@ $is_edit = $empresa !== null;
                 </div>
             </div>
             
-            <div class="row mb-4">
-                <div class="col-md-4">
+            <div class="row mb-3">
+                <div class="col-md-6">
                     <label class="form-label">Teléfono</label>
                     <input type="text" class="form-control" name="telefono" 
                            value="<?php echo $is_edit ? htmlspecialchars($empresa['telefono']) : ''; ?>">
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <label class="form-label">Correo Electrónico</label>
                     <input type="email" class="form-control" name="correo" 
                            value="<?php echo $is_edit ? htmlspecialchars($empresa['correo']) : ''; ?>">
                 </div>
-                <div class="col-md-4">
-                    <label class="form-label">Logo (Nombre archivo simulado)</label>
-                    <input type="text" class="form-control" name="logo" placeholder="logo.png"
-                           value="<?php echo $is_edit ? htmlspecialchars($empresa['logo']) : ''; ?>">
+            </div>
+
+            <div class="company-logo-editor mb-4">
+                <div class="company-logo-preview">
+                    <?php if ($logo_url): ?>
+                        <img src="<?php echo htmlspecialchars($logo_url); ?>" alt="Logo actual de <?php echo htmlspecialchars($empresa['razon_social']); ?>">
+                    <?php else: ?>
+                        <div class="company-logo-placeholder"><i class="bi bi-image"></i><span>Sin logo</span></div>
+                    <?php endif; ?>
+                </div>
+                <div class="flex-grow-1">
+                    <label class="form-label" for="companyLogo">Logo de empresa</label>
+                    <input type="file" class="form-control" id="companyLogo" name="logo" accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp">
+                    <div class="form-text">PNG, JPG, JPEG o WEBP. Tamaño máximo: 2 MB.</div>
+                    <?php if ($logo_url): ?>
+                    <div class="form-check mt-2"><input class="form-check-input" type="checkbox" value="1" name="quitar_logo" id="removeCompanyLogo"><label class="form-check-label" for="removeCompanyLogo">Quitar logo actual</label></div>
+                    <?php endif; ?>
                 </div>
             </div>
             

@@ -1,0 +1,21 @@
+<?php
+$temp=sys_get_temp_dir().'/invoice-view-'.bin2hex(random_bytes(6));mkdir($temp);define('DATA_PATH',$temp.'/');define('BASE_URL','/');$_SESSION=['empresa_id'=>1];
+require __DIR__.'/../includes/helpers.php';require __DIR__.'/../includes/invoice_view.php';require __DIR__.'/../includes/finance.php';
+$checks=0;function invoice_ok($condition,$message){global $checks;if(!$condition)throw new RuntimeException($message);$checks++;}
+try{
+ $companies=[];for($i=1;$i<=4;$i++)$companies[]=['id'=>$i,'razon_social'=>'Empresa '.$i,'ruc'=>'20'.$i];
+ $sale=['id'=>10,'empresa_id'=>3,'entrega'=>'pendiente','detalles'=>[['producto_id'=>1,'unidad_medida'=>'UN','cantidad'=>20,'despachado'=>10,'precio_unitario'=>15,'descuento'=>5,'subtotal'=>285]],'total'=>336.3,'estado_documento'=>'Vigente','condicion_pago'=>'credito','fecha_vencimiento'=>'2026-12-01'];
+ invoice_ok(invoice_owner_company($sale,$companies)['razon_social']==='Empresa 3','Usa empresa propietaria, no empresa activa');
+ foreach($companies as $company){$copy=$sale;$copy['empresa_id']=$company['id'];invoice_ok(invoice_owner_company($copy,$companies)['id']===$company['id'],'Propietario correcto para empresa '.$company['id']);}
+ $delivery=invoice_delivery_summary($sale);invoice_ok($delivery['estado']==='Entrega parcial'&&$delivery['solicitado']==20&&$delivery['entregado']==10&&$delivery['pendiente']==10,'Entrega parcial separa cantidades');
+ $pending=$sale;$pending['detalles'][0]['despachado']=0;invoice_ok(invoice_delivery_summary($pending)['estado']==='Entrega pendiente','Entrega pendiente');
+ $complete=$sale;$complete['entrega']='inmediata';$complete['detalles'][0]['despachado']=20;invoice_ok(invoice_delivery_summary($complete)['estado']==='Entrega completa','Entrega inmediata completa');
+ $payments=[['venta_id'=>10,'importe'=>100]];$financial=sale_financials($sale,$payments,[],'2026-10-01');invoice_ok($financial['pagado']===100.0&&$financial['saldo']===236.3&&$financial['estado']==='Parcialmente pagado','Crédito parcial usa importes reales');
+ invoice_ok(count(invoice_sale_payments($sale,[['venta_id'=>10,'importe'=>100,'medio'=>'Transferencia'],['venta_id'=>99,'importe'=>50]]))===1,'Solo muestra pagos del comprobante');
+ $cash=$sale;$cash['condicion_pago']='contado';$cash['total']=100;$cash['pago_contado_automatico']=true;$cashFinancial=sale_financials($cash,[['venta_id'=>10,'importe'=>100]],[]);invoice_ok($cashFinancial['saldo']==0&&$cashFinancial['estado']==='Pagado','Contado pagado no muestra deuda');
+ $products=[['id'=>1,'sku'=>'P-001','nombre'=>'Producto propio','unidad_medida'=>'UN'],['id'=>2,'sku'=>'OTRO','nombre'=>'Producto ajeno']];$rows=invoice_product_rows($sale,$products);invoice_ok(count($rows)===1&&$rows[0]['descripcion']==='Producto propio'&&!str_contains(render_invoice_product_rows($rows),'Producto ajeno'),'Detalle no mezcla productos');
+ invoice_ok(invoice_amount_words(103.84)==='CIENTO TRES CON 84/100 SOLES','Monto decimal en letras');invoice_ok(invoice_amount_words(1000.01)==='MIL CON 01/100 SOLES','Monto de miles en letras');
+ $many=$sale;$many['detalles']=[];for($i=0;$i<10;$i++)$many['detalles'][]=['producto_id'=>1,'unidad_medida'=>'UN','cantidad'=>$i+1,'despachado'=>$i+1,'precio_unitario'=>10,'descuento'=>0,'subtotal'=>($i+1)*10];$html=render_invoice_product_rows(invoice_product_rows($many,$products));invoice_ok(substr_count($html,'<tr>')===10,'Tabla renderiza diez líneas completas');
+ $source=file_get_contents(__DIR__.'/../pages/ventas/documento.php');foreach(['@media print','Datos del cliente','Estado de pago','Ver Kardex','Ver módulo SUNAT','sin envío SUNAT','company-logo-fallback','Código Hash:','QR disponible con integración SUNAT','Total a pagar','Condición de pago:','Vendedor:','Cant.','P.Unit','Dto.','Descargar PDF','ELECTRÓNICA','hora_emision']as$marker)invoice_ok(str_contains($source,$marker),'Plantilla contiene '.$marker);invoice_ok(!str_contains($source,'onclick="window.print()"'),'No depende del diálogo de impresión');invoice_ok(!str_contains($source,'ACEPTADO POR SUNAT'),'No afirma aceptación SUNAT');
+ echo "FACTURA OK: $checks verificaciones de presentación y estados.\n";
+}finally{foreach(glob(DATA_PATH.'*')as$file)if(is_file($file))unlink($file);rmdir($temp);}

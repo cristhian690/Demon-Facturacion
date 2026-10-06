@@ -66,22 +66,15 @@ $is_edit = $producto !== null;
                     <input type="text" class="form-control" name="marca" 
                            value="<?php echo $is_edit ? htmlspecialchars($producto['marca'] ?? '') : ''; ?>">
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-3">
                     <label class="form-label">Unidad de Medida <span class="text-danger">*</span></label>
                     <input type="text" class="form-control" name="unidad_medida" required placeholder="UN, KG, M"
                            value="<?php echo $is_edit ? htmlspecialchars($producto['unidad_medida'] ?? '') : 'UN'; ?>">
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-3">
                     <label class="form-label">Stock Mínimo</label>
                     <input type="number" class="form-control" name="stock_minimo" min="0"
                            value="<?php echo $is_edit ? htmlspecialchars($producto['stock_minimo'] ?? '0') : '0'; ?>">
-                </div>
-                <div class="col-md-2">
-                    <label class="form-label">Estado <span class="text-danger">*</span></label>
-                    <select class="form-select" name="estado">
-                        <option value="Activo" <?php echo ($is_edit && ($producto['estado'] ?? '') == 'Activo') ? 'selected' : ''; ?>>Activo</option>
-                        <option value="Inactivo" <?php echo ($is_edit && ($producto['estado'] ?? '') == 'Inactivo') ? 'selected' : ''; ?>>Inactivo</option>
-                    </select>
                 </div>
             </div>
             

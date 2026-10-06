@@ -3,9 +3,9 @@ require_once '../../config.php';
 require_once '../../includes/helpers.php';
 require_once '../../includes/quantities.php';
 
-$proveedores = get_data('proveedores');
-$productos = get_data('productos');
-$almacenes = get_data('almacenes');
+$proveedores = array_values(array_filter(get_data('proveedores'), fn($r) => ($r['estado'] ?? 'Activo') === 'Activo'));
+$productos = array_values(array_filter(get_data('productos'), fn($r) => ($r['estado'] ?? 'Activo') === 'Activo'));
+$almacenes = array_values(array_filter(get_data('almacenes'), fn($r) => ($r['estado'] ?? 'Activo') === 'Activo'));
 ?>
 <?php include '../../includes/header.php'; ?>
 

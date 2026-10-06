@@ -1,0 +1,22 @@
+[
+    {
+        "id": 1,
+        "empresa_id": 3,
+        "fecha": "2026-10-07T00:12:44+02:00",
+        "accion": "REGISTRAR_PAGO",
+        "entidad": "venta",
+        "entidad_id": 8,
+        "detalle": "S\/ 175.23",
+        "autor": "Sesión local"
+    },
+    {
+        "id": 2,
+        "empresa_id": 4,
+        "fecha": "2026-10-07T00:12:45+02:00",
+        "accion": "REGISTRAR_PAGO",
+        "entidad": "venta",
+        "entidad_id": 11,
+        "detalle": "S\/ 361.08",
+        "autor": "Sesión local"
+    }
+]

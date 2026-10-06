@@ -24,6 +24,7 @@ function sale_financials($sale, $payments = null, $refunds = null, $today = null
 function process_payment($input) {
     $sale = owned_record('ventas', $input['venta_id'] ?? '');
     if (($sale['estado_documento'] ?? 'Vigente') === 'Anulada') throw new InvalidArgumentException('No se registran pagos en una venta anulada.');
+    if (!empty($sale['pago_contado_automatico'])) throw new InvalidArgumentException('La venta al contado ya quedó pagada al confirmarse.');
     $request = input_text($input, 'request_id', true);
     if (!preg_match('/^[a-f0-9]{32}$/D', $request)) throw new InvalidArgumentException('Identificador inválido.');
     $payments = get_data('pagos');

@@ -37,6 +37,23 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('beforeunload', event => {
         if (!saved && dirty()) { event.preventDefault(); event.returnValue = ''; }
     });
+    document.addEventListener('submit', async event => {
+        const form = event.target.closest('.js-status-form');
+        if (!form) return;
+        event.preventDefault();
+        if (!confirm(form.dataset.confirm || '¿Confirmar el cambio de estado?')) return;
+        const button = form.querySelector('button[type="submit"]');
+        if (button.disabled) return;
+        button.disabled = true;
+        try {
+            const data = await post(form);
+            sessionStorage.setItem('saveNotice', data.message);
+            location.reload();
+        } catch (e) {
+            notice(e.message || 'No se pudo cambiar el estado.');
+            button.disabled = false;
+        }
+    });
     document.addEventListener('click', async event => {
         const link = event.target.closest('a[href]');
         if (!link) return;

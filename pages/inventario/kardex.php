@@ -36,11 +36,12 @@ $currentStock=array_sum(array_map(fn($r)=>(float)($r['stock_actual']??0),$curren
 $currentValue=array_sum(array_map(fn($r)=>(float)($r['valor_inventario']??0),$currentRows));
 $currentCpp=count($currentRows)===1?(float)$currentRows[0]['cpp']:null;
 $currentWarehouse=$almacenSeleccionado['nombre']??(count($currentRows)===1?($almacenNames[$currentRows[0]['almacen_id']]??'Almacén no disponible'):(count($currentRows)>1?count($currentRows).' almacenes':'Sin existencia actual'));
+$exportFilters=array_filter(['empresa_id'=>(string)($_SESSION['empresa_id']??''),'producto_id'=>$producto_id,'almacen_id'=>$almacen_id,'tipo_operacion'=>$tipo_operacion,'desde'=>$desde,'hasta'=>$hasta,'venta_id'=>$venta_id],fn($value)=>$value!=='');
 ?>
 <?php include '../../includes/header.php'; ?>
 <div class="page-heading d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
  <div><span class="page-eyebrow">Registro técnico de inventario</span><h1 class="h3 mb-1">Kardex Valorizado</h1><p class="text-muted mb-0">Historial valorizado de entradas, salidas y saldos de inventario por producto y almacén.</p></div>
- <div class="d-flex gap-2"><button class="btn export-future" disabled title="El exportador actual todavía no admite los filtros del Kardex"><i class="bi bi-download"></i><span>Exportar Kardex</span><small>Próximamente</small></button><a href="<?php echo url('pages/inventario/index.php'); ?>" class="btn btn-outline-primary"><i class="bi bi-boxes me-1"></i>Inventario</a></div>
+ <div class="d-flex gap-2"><a class="btn btn-outline-success" href="<?php echo url('actions/exportar_kardex.php?'.http_build_query($exportFilters)); ?>"><i class="bi bi-file-earmark-spreadsheet me-1"></i><span>Exportar Kardex</span></a><a href="<?php echo url('pages/inventario/index.php'); ?>" class="btn btn-outline-primary"><i class="bi bi-boxes me-1"></i>Inventario</a></div>
 </div>
 <section class="card kardex-filter-card mb-4">
  <div class="card-header"><div><span class="chart-kicker">Consulta histórica</span><h2 class="h6 mb-0">Filtros del Kardex</h2></div><span class="active-company"><i class="bi bi-building"></i><?php echo htmlspecialchars($empresa['nombre']); ?></span></div>

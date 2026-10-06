@@ -11,6 +11,18 @@ function valid_date($date) {
     $d = DateTimeImmutable::createFromFormat('!Y-m-d', $date);
     return $d && $d->format('Y-m-d') === $date;
 }
+function sale_document_series($type) {
+    return match ($type) { 'Factura' => 'F001', 'Boleta' => 'B001', default => throw new InvalidArgumentException('Tipo de documento inválido.') };
+}
+function next_sale_document_number($documents, $type) {
+    $series = sale_document_series($type); $maximum = 0;
+    foreach ($documents as $document) {
+        if (!belongs_to_company($document) || ($document['tipo_documento'] ?? '') !== $type || ($document['serie'] ?? '') !== $series) continue;
+        $number = (string)($document['numero'] ?? '');
+        if (ctype_digit($number)) $maximum = max($maximum, (int)$number);
+    }
+    return str_pad((string)($maximum + 1), 6, '0', STR_PAD_LEFT);
+}
 function process_operation($sale, $input) {
     validate_context($input);
     $table = $sale ? 'ventas' : 'compras';
@@ -21,11 +33,20 @@ function process_operation($sale, $input) {
     if (!preg_match('/^[a-f0-9]{32}$/', $request)) throw new InvalidArgumentException('Identificador de formulario inválido.');
     $documents = get_data($table);
     foreach ($documents as $doc) if (($doc['request_id'] ?? '') === $request) return ['redirect' => url('pages/' . $table . '/detalle.php?id=' . $doc['id'])];
-    owned_record($sale ? 'clientes' : 'proveedores', $input[$party] ?? '');
+    $partyRecord = owned_record($sale ? 'clientes' : 'proveedores', $input[$party] ?? '');
+    if (($partyRecord['estado'] ?? 'Activo') !== 'Activo') throw new InvalidArgumentException(($sale ? 'El cliente' : 'El proveedor') . ' seleccionado está inactivo.');
     $warehouse = owned_record('almacenes', $input['almacen_id'] ?? '');
     if (($warehouse['estado'] ?? 'Activo') !== 'Activo') throw new InvalidArgumentException('El almacén "' . ($warehouse['nombre'] ?? '') . '" está inactivo. Selecciona otro almacén.');
     $doc = ['id' => next_id($table), 'empresa_id' => (int)$_SESSION['empresa_id'], $party => (int)$input[$party], 'almacen_id' => $warehouse['id'], 'request_id' => $request, 'detalles' => []];
-    foreach (['tipo_documento','serie','numero','fecha'] as $key) $doc[$key] = input_text($input, $key, true);
+    foreach (['tipo_documento','fecha'] as $key) $doc[$key] = input_text($input, $key, true);
+    if ($sale) {
+        $doc['serie'] = sale_document_series($doc['tipo_documento']);
+        $doc['numero'] = next_sale_document_number($documents, $doc['tipo_documento']);
+        $doc['fecha_emision'] = $doc['fecha'];
+        $doc['hora_emision'] = date('H:i:s');
+    } else {
+        foreach (['serie','numero'] as $key) $doc[$key] = input_text($input, $key, true);
+    }
     if (!valid_date($doc['fecha'])) throw new InvalidArgumentException('Fecha inválida.');
     if (!in_array($doc['tipo_documento'], ['Factura','Boleta'], true)) throw new InvalidArgumentException('Tipo de documento inválido.');
     if (!preg_match('/^[A-Z0-9-]{1,10}$/D', $doc['serie'])) throw new InvalidArgumentException('La serie contiene caracteres inválidos.');
@@ -34,8 +55,8 @@ function process_operation($sale, $input) {
         $doc['tipo_operacion'] = input_text($input + ['tipo_operacion'=>'Venta interna'], 'tipo_operacion', true);
         if (!in_array($doc['tipo_operacion'], ['Venta interna','Venta para exportación'], true)) throw new InvalidArgumentException('Tipo de operación inválido.');
         $doc['moneda'] = input_text($input + ['moneda'=>'PEN'], 'moneda', true);
-        if ($doc['moneda'] !== 'PEN') throw new InvalidArgumentException('Por ahora la facturación e inventario valorizado operan en soles.');
-        $doc['tipo_cambio'] = 1;
+        if (!in_array($doc['moneda'], ['PEN','USD'], true)) throw new InvalidArgumentException('Moneda inválida.');
+        $doc['tipo_cambio'] = $doc['moneda'] === 'PEN' ? 1.0 : operation_number($input['tipo_cambio'] ?? null, 'tipo de cambio', 0.001, 1000);
         $doc['orden_compra'] = input_text($input, 'orden_compra');
         $doc['observacion'] = input_text($input, 'observacion');
         $doc['vendedor'] = $_SESSION['usuario']['nombre'] ?? 'Administrador';
@@ -120,8 +141,30 @@ function process_operation($sale, $input) {
             for ($i = count($ledger) - count($lines); $i < count($ledger); $i++) $ledger[$i]['venta_id'] = $doc['id'];
         }
     }
+    $payments = null;
+    if ($sale && $doc['condicion_pago'] === 'contado') {
+        $doc['pago_contado_automatico'] = true;
+        $payments = get_data('pagos');
+        $payments[] = [
+            'id'=>next_id('pagos'),
+            'empresa_id'=>$doc['empresa_id'],
+            'venta_id'=>$doc['id'],
+            'request_id'=>$request,
+            'fecha'=>$doc['fecha'],
+            'importe'=>$doc['total'],
+            'medio'=>'Contado',
+            'referencia'=>'Pago automático al confirmar'
+        ];
+    }
     $documents[] = $doc;
-    if ($sale && $delivery === 'pendiente') save_data($table, $documents);
-    else save_batch([$table => $documents, 'inventario' => $inventory, 'kardex' => $ledger]);
+    if ($sale && $delivery === 'pendiente') {
+        $batch = [$table=>$documents];
+        if ($payments !== null) $batch['pagos']=$payments;
+        save_batch($batch);
+    } else {
+        $batch = [$table=>$documents, 'inventario'=>$inventory, 'kardex'=>$ledger];
+        if ($payments !== null) $batch['pagos']=$payments;
+        save_batch($batch);
+    }
     return ['redirect' => url('pages/' . $table . '/detalle.php?id=' . $doc['id'])];
 }

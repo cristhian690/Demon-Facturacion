@@ -2,7 +2,7 @@
 require_once '../../config.php'; require_once '../../includes/helpers.php'; require_once '../../includes/finance.php';
 $clients=get_data('clientes'); $names=[]; foreach($clients as $c)$names[$c['id']]=$c['nombre'];
 $filters=['cliente_id'=>$_GET['cliente_id']??'','estado'=>$_GET['estado']??'','desde'=>$_GET['desde']??'','hasta'=>$_GET['hasta']??''];
-$rows=[]; foreach(get_data('ventas') as $sale){$f=sale_financials($sale); if($filters['cliente_id']!==''&&(string)$sale['cliente_id']!==$filters['cliente_id'])continue;if($filters['estado']!==''&&$f['estado']!==$filters['estado'])continue;$due=$sale['fecha_vencimiento']??'';if($filters['desde']!==''&&($due===''||$due<$filters['desde']))continue;if($filters['hasta']!==''&&($due===''||$due>$filters['hasta']))continue;$rows[]=[$sale,$f];}
+$rows=[]; foreach(get_data('ventas') as $sale){$f=sale_financials($sale);if($f['saldo']<=0)continue; if($filters['cliente_id']!==''&&(string)$sale['cliente_id']!==$filters['cliente_id'])continue;if($filters['estado']!==''&&$f['estado']!==$filters['estado'])continue;$due=$sale['fecha_vencimiento']??'';if($filters['desde']!==''&&($due===''||$due<$filters['desde']))continue;if($filters['hasta']!==''&&($due===''||$due>$filters['hasta']))continue;$rows[]=[$sale,$f];}
 include '../../includes/header.php';
 ?>
 <div class="page-heading d-flex justify-content-between align-items-end mb-4"><div><span class="page-eyebrow">Tesorería</span><h1 class="h3 mb-1">Cuentas por cobrar</h1><p class="text-muted mb-0">Controla vencimientos, pagos recibidos y saldos de clientes.</p></div><a class="btn btn-outline-success" href="<?php echo url('actions/exportar_csv.php?reporte=cobros&'.http_build_query($filters)); ?>"><i class="bi bi-file-earmark-spreadsheet me-1"></i>Exportar CSV</a></div>

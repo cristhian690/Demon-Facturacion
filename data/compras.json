@@ -3,211 +3,719 @@
         "id": 1,
         "empresa_id": 1,
         "proveedor_id": 1,
-        "tipo_documento": "Factura",
-        "serie": "F001",
-        "numero": "123",
-        "fecha": "2026-09-17",
         "almacen_id": 1,
-        "subtotal": 20000,
-        "igv": 3600,
-        "total": 23600,
+        "request_id": "c9315aa3bb830da66d18c498a776d99f",
+        "detalles": [
+            {
+                "producto_id": 1,
+                "unidad_medida": "KG",
+                "cantidad": 20,
+                "subtotal": 200,
+                "descuento": 0,
+                "costo_unitario": 10
+            },
+            {
+                "producto_id": 2,
+                "unidad_medida": "LT",
+                "cantidad": 10,
+                "subtotal": 190,
+                "descuento": 0,
+                "costo_unitario": 19
+            }
+        ],
+        "tipo_documento": "Factura",
+        "serie": "C001",
+        "numero": "1",
+        "fecha": "2026-09-01",
+        "subtotal": 390,
+        "igv": 70.2,
+        "total": 460.2,
+        "impacto_simulacion": [
+            {
+                "producto_id": 1,
+                "stock_anterior": 0,
+                "cpp_anterior": 0,
+                "cpp_vigente": 0,
+                "cantidad_vendida": 20,
+                "cantidad_comprada": 20,
+                "precio_venta": 10,
+                "costo_compra": 10,
+                "nuevo_stock": 20,
+                "nuevo_cpp": 10,
+                "costo_venta_linea": 200
+            },
+            {
+                "producto_id": 2,
+                "stock_anterior": 0,
+                "cpp_anterior": 0,
+                "cpp_vigente": 0,
+                "cantidad_vendida": 10,
+                "cantidad_comprada": 10,
+                "precio_venta": 19,
+                "costo_compra": 19,
+                "nuevo_stock": 10,
+                "nuevo_cpp": 19,
+                "costo_venta_linea": 190
+            }
+        ]
+    },
+    {
+        "id": 2,
+        "empresa_id": 1,
+        "proveedor_id": 2,
+        "almacen_id": 2,
+        "request_id": "01efe86016fa740039264fe3728d7d54",
         "detalles": [
             {
                 "producto_id": 3,
-                "cantidad": 10,
-                "costo_unitario": 2000,
-                "subtotal": 20000
+                "unidad_medida": "KG",
+                "cantidad": 8,
+                "subtotal": 40,
+                "descuento": 0,
+                "costo_unitario": 5
+            },
+            {
+                "producto_id": 4,
+                "unidad_medida": "UN",
+                "cantidad": 12,
+                "subtotal": 168,
+                "descuento": 0,
+                "costo_unitario": 14
             }
         ],
+        "tipo_documento": "Factura",
+        "serie": "C001",
+        "numero": "2",
+        "fecha": "2026-09-03",
+        "subtotal": 208,
+        "igv": 37.44,
+        "total": 245.44,
         "impacto_simulacion": [
             {
                 "producto_id": 3,
                 "stock_anterior": 0,
                 "cpp_anterior": 0,
-                "cantidad_comprada": 10,
-                "costo_compra": 2000,
-                "nuevo_stock": 10,
-                "nuevo_cpp": 2000
+                "cpp_vigente": 0,
+                "cantidad_vendida": 8,
+                "cantidad_comprada": 8,
+                "precio_venta": 5,
+                "costo_compra": 5,
+                "nuevo_stock": 8,
+                "nuevo_cpp": 5,
+                "costo_venta_linea": 40
+            },
+            {
+                "producto_id": 4,
+                "stock_anterior": 0,
+                "cpp_anterior": 0,
+                "cpp_vigente": 0,
+                "cantidad_vendida": 12,
+                "cantidad_comprada": 12,
+                "precio_venta": 14,
+                "costo_compra": 14,
+                "nuevo_stock": 12,
+                "nuevo_cpp": 14,
+                "costo_venta_linea": 168
             }
         ]
     },
     {
         "id": 3,
         "empresa_id": 1,
-        "proveedor_id": 1,
-        "tipo_documento": "Factura",
-        "serie": "F002",
-        "numero": "000124",
-        "fecha": "2026-09-17",
+        "proveedor_id": 3,
         "almacen_id": 1,
-        "subtotal": 3500,
-        "igv": 630,
-        "total": 4130,
+        "request_id": "f1d6531436eedfae3ad0398fd5ee3c64",
         "detalles": [
             {
-                "producto_id": 1,
-                "cantidad": 1,
-                "costo_unitario": 3500,
-                "subtotal": 3500
-            }
-        ],
-        "impacto_simulacion": [
+                "producto_id": 5,
+                "unidad_medida": "UN",
+                "cantidad": 6,
+                "subtotal": 48,
+                "descuento": 0,
+                "costo_unitario": 8
+            },
             {
                 "producto_id": 1,
-                "stock_anterior": 96,
-                "cpp_anterior": 3500,
-                "cantidad_comprada": 1,
-                "costo_compra": 3500,
-                "nuevo_stock": 97,
-                "nuevo_cpp": 3500
+                "unidad_medida": "KG",
+                "cantidad": 5,
+                "subtotal": 60,
+                "descuento": 0,
+                "costo_unitario": 12
+            }
+        ],
+        "tipo_documento": "Factura",
+        "serie": "C001",
+        "numero": "3",
+        "fecha": "2026-09-05",
+        "subtotal": 108,
+        "igv": 19.44,
+        "total": 127.44,
+        "impacto_simulacion": [
+            {
+                "producto_id": 5,
+                "stock_anterior": 0,
+                "cpp_anterior": 0,
+                "cpp_vigente": 0,
+                "cantidad_vendida": 6,
+                "cantidad_comprada": 6,
+                "precio_venta": 8,
+                "costo_compra": 8,
+                "nuevo_stock": 6,
+                "nuevo_cpp": 8,
+                "costo_venta_linea": 48
+            },
+            {
+                "producto_id": 1,
+                "stock_anterior": 20,
+                "cpp_anterior": 10,
+                "cpp_vigente": 10,
+                "cantidad_vendida": 5,
+                "cantidad_comprada": 5,
+                "precio_venta": 12,
+                "costo_compra": 12,
+                "nuevo_stock": 25,
+                "nuevo_cpp": 10.4,
+                "costo_venta_linea": 60
             }
         ]
     },
     {
         "id": 4,
-        "empresa_id": 1,
-        "proveedor_id": 2,
-        "almacen_id": 2,
-        "request_id": "fee587adeac198ae1ac3e54f1ad27de7",
-        "detalles": [
-            {
-                "producto_id": 4,
-                "cantidad": 10,
-                "subtotal": 1000,
-                "descuento": 0,
-                "costo_unitario": 100
-            },
-            {
-                "producto_id": 5,
-                "cantidad": 10,
-                "subtotal": 500,
-                "descuento": 0,
-                "costo_unitario": 50
-            }
-        ],
-        "tipo_documento": "Factura",
-        "serie": "PRUEBA",
-        "numero": "INICIAL-E1",
-        "fecha": "2026-09-18",
-        "subtotal": 1500,
-        "igv": 270,
-        "total": 1770,
-        "impacto_simulacion": [
-            {
-                "producto_id": 4,
-                "stock_anterior": 0,
-                "cpp_anterior": 0,
-                "cpp_vigente": 0,
-                "cantidad_vendida": 10,
-                "cantidad_comprada": 10,
-                "precio_venta": 100,
-                "costo_compra": 100,
-                "nuevo_stock": 10,
-                "nuevo_cpp": 100,
-                "costo_venta_linea": 1000
-            },
-            {
-                "producto_id": 5,
-                "stock_anterior": 0,
-                "cpp_anterior": 0,
-                "cpp_vigente": 0,
-                "cantidad_vendida": 10,
-                "cantidad_comprada": 10,
-                "precio_venta": 50,
-                "costo_compra": 50,
-                "nuevo_stock": 10,
-                "nuevo_cpp": 50,
-                "costo_venta_linea": 500
-            }
-        ]
-    },
-    {
-        "id": 2,
         "empresa_id": 2,
-        "proveedor_id": 1,
-        "tipo_documento": "Factura",
-        "serie": "F001",
-        "numero": "000123",
-        "fecha": "2026-09-17",
-        "almacen_id": 1,
-        "subtotal": 20000,
-        "igv": 3600,
-        "total": 23600,
+        "proveedor_id": 6,
+        "almacen_id": 3,
+        "request_id": "d10db3bdac42a57fed165459d667b1af",
         "detalles": [
             {
-                "producto_id": 1,
+                "producto_id": 6,
+                "unidad_medida": "KG",
+                "cantidad": 20,
+                "subtotal": 220,
+                "descuento": 0,
+                "costo_unitario": 11
+            },
+            {
+                "producto_id": 7,
+                "unidad_medida": "LT",
                 "cantidad": 10,
-                "costo_unitario": 2000,
-                "subtotal": 20000
+                "subtotal": 200,
+                "descuento": 0,
+                "costo_unitario": 20
             }
         ],
+        "tipo_documento": "Factura",
+        "serie": "C001",
+        "numero": "1",
+        "fecha": "2026-09-01",
+        "subtotal": 420,
+        "igv": 75.6,
+        "total": 495.6,
         "impacto_simulacion": [
             {
-                "producto_id": 1,
+                "producto_id": 6,
                 "stock_anterior": 0,
                 "cpp_anterior": 0,
+                "cpp_vigente": 0,
+                "cantidad_vendida": 20,
+                "cantidad_comprada": 20,
+                "precio_venta": 11,
+                "costo_compra": 11,
+                "nuevo_stock": 20,
+                "nuevo_cpp": 11,
+                "costo_venta_linea": 220
+            },
+            {
+                "producto_id": 7,
+                "stock_anterior": 0,
+                "cpp_anterior": 0,
+                "cpp_vigente": 0,
+                "cantidad_vendida": 10,
                 "cantidad_comprada": 10,
-                "costo_compra": 2000,
+                "precio_venta": 20,
+                "costo_compra": 20,
                 "nuevo_stock": 10,
-                "nuevo_cpp": 2000
+                "nuevo_cpp": 20,
+                "costo_venta_linea": 200
             }
         ]
     },
     {
         "id": 5,
         "empresa_id": 2,
-        "proveedor_id": 3,
-        "almacen_id": 3,
-        "request_id": "c7c8135a4e3de1c3d87accd8a54813ec",
+        "proveedor_id": 7,
+        "almacen_id": 4,
+        "request_id": "bffc99148ccccc4da8ff19755106a6a2",
         "detalles": [
             {
-                "producto_id": 6,
-                "cantidad": 10,
-                "subtotal": 1000,
+                "producto_id": 8,
+                "unidad_medida": "KG",
+                "cantidad": 8,
+                "subtotal": 48,
                 "descuento": 0,
-                "costo_unitario": 100
+                "costo_unitario": 6
             },
             {
-                "producto_id": 7,
-                "cantidad": 10,
-                "subtotal": 500,
+                "producto_id": 9,
+                "unidad_medida": "UN",
+                "cantidad": 12,
+                "subtotal": 180,
                 "descuento": 0,
-                "costo_unitario": 50
+                "costo_unitario": 15
             }
         ],
         "tipo_documento": "Factura",
-        "serie": "PRUEBA",
-        "numero": "INICIAL-E2",
-        "fecha": "2026-09-18",
-        "subtotal": 1500,
-        "igv": 270,
-        "total": 1770,
+        "serie": "C001",
+        "numero": "2",
+        "fecha": "2026-09-03",
+        "subtotal": 228,
+        "igv": 41.04,
+        "total": 269.04,
         "impacto_simulacion": [
             {
-                "producto_id": 6,
+                "producto_id": 8,
                 "stock_anterior": 0,
                 "cpp_anterior": 0,
                 "cpp_vigente": 0,
-                "cantidad_vendida": 10,
-                "cantidad_comprada": 10,
-                "precio_venta": 100,
-                "costo_compra": 100,
-                "nuevo_stock": 10,
-                "nuevo_cpp": 100,
-                "costo_venta_linea": 1000
+                "cantidad_vendida": 8,
+                "cantidad_comprada": 8,
+                "precio_venta": 6,
+                "costo_compra": 6,
+                "nuevo_stock": 8,
+                "nuevo_cpp": 6,
+                "costo_venta_linea": 48
             },
             {
-                "producto_id": 7,
+                "producto_id": 9,
+                "stock_anterior": 0,
+                "cpp_anterior": 0,
+                "cpp_vigente": 0,
+                "cantidad_vendida": 12,
+                "cantidad_comprada": 12,
+                "precio_venta": 15,
+                "costo_compra": 15,
+                "nuevo_stock": 12,
+                "nuevo_cpp": 15,
+                "costo_venta_linea": 180
+            }
+        ]
+    },
+    {
+        "id": 6,
+        "empresa_id": 2,
+        "proveedor_id": 8,
+        "almacen_id": 3,
+        "request_id": "8118aecabadf77b842e19235c7c513cb",
+        "detalles": [
+            {
+                "producto_id": 10,
+                "unidad_medida": "UN",
+                "cantidad": 6,
+                "subtotal": 54,
+                "descuento": 0,
+                "costo_unitario": 9
+            },
+            {
+                "producto_id": 6,
+                "unidad_medida": "KG",
+                "cantidad": 5,
+                "subtotal": 65,
+                "descuento": 0,
+                "costo_unitario": 13
+            }
+        ],
+        "tipo_documento": "Factura",
+        "serie": "C001",
+        "numero": "3",
+        "fecha": "2026-09-05",
+        "subtotal": 119,
+        "igv": 21.42,
+        "total": 140.42000000000002,
+        "impacto_simulacion": [
+            {
+                "producto_id": 10,
+                "stock_anterior": 0,
+                "cpp_anterior": 0,
+                "cpp_vigente": 0,
+                "cantidad_vendida": 6,
+                "cantidad_comprada": 6,
+                "precio_venta": 9,
+                "costo_compra": 9,
+                "nuevo_stock": 6,
+                "nuevo_cpp": 9,
+                "costo_venta_linea": 54
+            },
+            {
+                "producto_id": 6,
+                "stock_anterior": 20,
+                "cpp_anterior": 11,
+                "cpp_vigente": 11,
+                "cantidad_vendida": 5,
+                "cantidad_comprada": 5,
+                "precio_venta": 13,
+                "costo_compra": 13,
+                "nuevo_stock": 25,
+                "nuevo_cpp": 11.4,
+                "costo_venta_linea": 65
+            }
+        ]
+    },
+    {
+        "id": 7,
+        "empresa_id": 3,
+        "proveedor_id": 11,
+        "almacen_id": 5,
+        "request_id": "8207cc9ac3faf021e55c7f36511312be",
+        "detalles": [
+            {
+                "producto_id": 11,
+                "unidad_medida": "KG",
+                "cantidad": 20,
+                "subtotal": 240,
+                "descuento": 0,
+                "costo_unitario": 12
+            },
+            {
+                "producto_id": 12,
+                "unidad_medida": "LT",
+                "cantidad": 10,
+                "subtotal": 210,
+                "descuento": 0,
+                "costo_unitario": 21
+            }
+        ],
+        "tipo_documento": "Factura",
+        "serie": "C001",
+        "numero": "1",
+        "fecha": "2026-09-01",
+        "subtotal": 450,
+        "igv": 81,
+        "total": 531,
+        "impacto_simulacion": [
+            {
+                "producto_id": 11,
+                "stock_anterior": 0,
+                "cpp_anterior": 0,
+                "cpp_vigente": 0,
+                "cantidad_vendida": 20,
+                "cantidad_comprada": 20,
+                "precio_venta": 12,
+                "costo_compra": 12,
+                "nuevo_stock": 20,
+                "nuevo_cpp": 12,
+                "costo_venta_linea": 240
+            },
+            {
+                "producto_id": 12,
                 "stock_anterior": 0,
                 "cpp_anterior": 0,
                 "cpp_vigente": 0,
                 "cantidad_vendida": 10,
                 "cantidad_comprada": 10,
-                "precio_venta": 50,
-                "costo_compra": 50,
+                "precio_venta": 21,
+                "costo_compra": 21,
                 "nuevo_stock": 10,
-                "nuevo_cpp": 50,
-                "costo_venta_linea": 500
+                "nuevo_cpp": 21,
+                "costo_venta_linea": 210
+            }
+        ]
+    },
+    {
+        "id": 8,
+        "empresa_id": 3,
+        "proveedor_id": 12,
+        "almacen_id": 6,
+        "request_id": "c7a67311a15b29256b8ecf26fa682fc8",
+        "detalles": [
+            {
+                "producto_id": 13,
+                "unidad_medida": "KG",
+                "cantidad": 8,
+                "subtotal": 56,
+                "descuento": 0,
+                "costo_unitario": 7
+            },
+            {
+                "producto_id": 14,
+                "unidad_medida": "UN",
+                "cantidad": 12,
+                "subtotal": 192,
+                "descuento": 0,
+                "costo_unitario": 16
+            }
+        ],
+        "tipo_documento": "Factura",
+        "serie": "C001",
+        "numero": "2",
+        "fecha": "2026-09-03",
+        "subtotal": 248,
+        "igv": 44.64,
+        "total": 292.64,
+        "impacto_simulacion": [
+            {
+                "producto_id": 13,
+                "stock_anterior": 0,
+                "cpp_anterior": 0,
+                "cpp_vigente": 0,
+                "cantidad_vendida": 8,
+                "cantidad_comprada": 8,
+                "precio_venta": 7,
+                "costo_compra": 7,
+                "nuevo_stock": 8,
+                "nuevo_cpp": 7,
+                "costo_venta_linea": 56
+            },
+            {
+                "producto_id": 14,
+                "stock_anterior": 0,
+                "cpp_anterior": 0,
+                "cpp_vigente": 0,
+                "cantidad_vendida": 12,
+                "cantidad_comprada": 12,
+                "precio_venta": 16,
+                "costo_compra": 16,
+                "nuevo_stock": 12,
+                "nuevo_cpp": 16,
+                "costo_venta_linea": 192
+            }
+        ]
+    },
+    {
+        "id": 9,
+        "empresa_id": 3,
+        "proveedor_id": 13,
+        "almacen_id": 5,
+        "request_id": "fe75680dfe7a29317f097286022ed0d4",
+        "detalles": [
+            {
+                "producto_id": 15,
+                "unidad_medida": "UN",
+                "cantidad": 6,
+                "subtotal": 60,
+                "descuento": 0,
+                "costo_unitario": 10
+            },
+            {
+                "producto_id": 11,
+                "unidad_medida": "KG",
+                "cantidad": 5,
+                "subtotal": 70,
+                "descuento": 0,
+                "costo_unitario": 14
+            }
+        ],
+        "tipo_documento": "Factura",
+        "serie": "C001",
+        "numero": "3",
+        "fecha": "2026-09-05",
+        "subtotal": 130,
+        "igv": 23.4,
+        "total": 153.4,
+        "impacto_simulacion": [
+            {
+                "producto_id": 15,
+                "stock_anterior": 0,
+                "cpp_anterior": 0,
+                "cpp_vigente": 0,
+                "cantidad_vendida": 6,
+                "cantidad_comprada": 6,
+                "precio_venta": 10,
+                "costo_compra": 10,
+                "nuevo_stock": 6,
+                "nuevo_cpp": 10,
+                "costo_venta_linea": 60
+            },
+            {
+                "producto_id": 11,
+                "stock_anterior": 20,
+                "cpp_anterior": 12,
+                "cpp_vigente": 12,
+                "cantidad_vendida": 5,
+                "cantidad_comprada": 5,
+                "precio_venta": 14,
+                "costo_compra": 14,
+                "nuevo_stock": 25,
+                "nuevo_cpp": 12.4,
+                "costo_venta_linea": 70
+            }
+        ]
+    },
+    {
+        "id": 10,
+        "empresa_id": 4,
+        "proveedor_id": 16,
+        "almacen_id": 7,
+        "request_id": "21cbede3cda22822f8c6662094b5942c",
+        "detalles": [
+            {
+                "producto_id": 16,
+                "unidad_medida": "KG",
+                "cantidad": 20,
+                "subtotal": 260,
+                "descuento": 0,
+                "costo_unitario": 13
+            },
+            {
+                "producto_id": 17,
+                "unidad_medida": "LT",
+                "cantidad": 10,
+                "subtotal": 220,
+                "descuento": 0,
+                "costo_unitario": 22
+            }
+        ],
+        "tipo_documento": "Factura",
+        "serie": "C001",
+        "numero": "1",
+        "fecha": "2026-09-01",
+        "subtotal": 480,
+        "igv": 86.4,
+        "total": 566.4,
+        "impacto_simulacion": [
+            {
+                "producto_id": 16,
+                "stock_anterior": 0,
+                "cpp_anterior": 0,
+                "cpp_vigente": 0,
+                "cantidad_vendida": 20,
+                "cantidad_comprada": 20,
+                "precio_venta": 13,
+                "costo_compra": 13,
+                "nuevo_stock": 20,
+                "nuevo_cpp": 13,
+                "costo_venta_linea": 260
+            },
+            {
+                "producto_id": 17,
+                "stock_anterior": 0,
+                "cpp_anterior": 0,
+                "cpp_vigente": 0,
+                "cantidad_vendida": 10,
+                "cantidad_comprada": 10,
+                "precio_venta": 22,
+                "costo_compra": 22,
+                "nuevo_stock": 10,
+                "nuevo_cpp": 22,
+                "costo_venta_linea": 220
+            }
+        ]
+    },
+    {
+        "id": 11,
+        "empresa_id": 4,
+        "proveedor_id": 17,
+        "almacen_id": 8,
+        "request_id": "d753c20b378845e3874d9c6aa8a34e08",
+        "detalles": [
+            {
+                "producto_id": 18,
+                "unidad_medida": "KG",
+                "cantidad": 8,
+                "subtotal": 64,
+                "descuento": 0,
+                "costo_unitario": 8
+            },
+            {
+                "producto_id": 19,
+                "unidad_medida": "UN",
+                "cantidad": 12,
+                "subtotal": 204,
+                "descuento": 0,
+                "costo_unitario": 17
+            }
+        ],
+        "tipo_documento": "Factura",
+        "serie": "C001",
+        "numero": "2",
+        "fecha": "2026-09-03",
+        "subtotal": 268,
+        "igv": 48.24,
+        "total": 316.24,
+        "impacto_simulacion": [
+            {
+                "producto_id": 18,
+                "stock_anterior": 0,
+                "cpp_anterior": 0,
+                "cpp_vigente": 0,
+                "cantidad_vendida": 8,
+                "cantidad_comprada": 8,
+                "precio_venta": 8,
+                "costo_compra": 8,
+                "nuevo_stock": 8,
+                "nuevo_cpp": 8,
+                "costo_venta_linea": 64
+            },
+            {
+                "producto_id": 19,
+                "stock_anterior": 0,
+                "cpp_anterior": 0,
+                "cpp_vigente": 0,
+                "cantidad_vendida": 12,
+                "cantidad_comprada": 12,
+                "precio_venta": 17,
+                "costo_compra": 17,
+                "nuevo_stock": 12,
+                "nuevo_cpp": 17,
+                "costo_venta_linea": 204
+            }
+        ]
+    },
+    {
+        "id": 12,
+        "empresa_id": 4,
+        "proveedor_id": 18,
+        "almacen_id": 7,
+        "request_id": "9ab221d66084bfddfebdc4c6c23c0c99",
+        "detalles": [
+            {
+                "producto_id": 20,
+                "unidad_medida": "UN",
+                "cantidad": 6,
+                "subtotal": 66,
+                "descuento": 0,
+                "costo_unitario": 11
+            },
+            {
+                "producto_id": 16,
+                "unidad_medida": "KG",
+                "cantidad": 5,
+                "subtotal": 75,
+                "descuento": 0,
+                "costo_unitario": 15
+            }
+        ],
+        "tipo_documento": "Factura",
+        "serie": "C001",
+        "numero": "3",
+        "fecha": "2026-09-05",
+        "subtotal": 141,
+        "igv": 25.38,
+        "total": 166.38,
+        "impacto_simulacion": [
+            {
+                "producto_id": 20,
+                "stock_anterior": 0,
+                "cpp_anterior": 0,
+                "cpp_vigente": 0,
+                "cantidad_vendida": 6,
+                "cantidad_comprada": 6,
+                "precio_venta": 11,
+                "costo_compra": 11,
+                "nuevo_stock": 6,
+                "nuevo_cpp": 11,
+                "costo_venta_linea": 66
+            },
+            {
+                "producto_id": 16,
+                "stock_anterior": 20,
+                "cpp_anterior": 13,
+                "cpp_vigente": 13,
+                "cantidad_vendida": 5,
+                "cantidad_comprada": 5,
+                "precio_venta": 15,
+                "costo_compra": 15,
+                "nuevo_stock": 25,
+                "nuevo_cpp": 13.4,
+                "costo_venta_linea": 75
             }
         ]
     }

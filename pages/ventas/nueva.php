@@ -3,9 +3,9 @@ require_once '../../config.php';
 require_once '../../includes/helpers.php';
 require_once '../../includes/quantities.php';
 
-$clientes = get_data('clientes');
-$productos = get_data('productos');
-$almacenes = get_data('almacenes');
+$clientes = array_values(array_filter(get_data('clientes'), fn($r) => ($r['estado'] ?? 'Activo') === 'Activo'));
+$productos = array_values(array_filter(get_data('productos'), fn($r) => ($r['estado'] ?? 'Activo') === 'Activo'));
+$almacenes = array_values(array_filter(get_data('almacenes'), fn($r) => ($r['estado'] ?? 'Activo') === 'Activo'));
 ?>
 <?php include '../../includes/header.php'; ?>
 
@@ -23,15 +23,15 @@ $almacenes = get_data('almacenes');
             <div class="row g-3 mb-3">
                 <div class="col-md-6 col-xl-3"><label class="form-label">Empresa</label><input class="form-control readonly-field" value="<?php echo htmlspecialchars(get_empresa_activa()['nombre']); ?>" readonly></div>
                 <div class="col-md-6 col-xl-3"><label class="form-label">Vendedor</label><input class="form-control readonly-field" value="<?php echo htmlspecialchars($_SESSION['usuario']['nombre'] ?? 'Administrador'); ?>" readonly></div>
-                <div class="col-md-6 col-xl-2"><label class="form-label">Tipo de comprobante <span class="text-danger">*</span></label><select class="form-select" name="tipo_documento" required><option value="Factura">Factura</option><option value="Boleta">Boleta</option></select></div>
-                <div class="col-md-3 col-xl-2"><label class="form-label">Serie <span class="text-danger">*</span></label><input type="text" class="form-control text-uppercase" name="serie" value="F001" maxlength="10" pattern="[A-Za-z0-9-]+" oninput="this.value=this.value.toUpperCase()" required></div>
-                <div class="col-md-3 col-xl-2"><label class="form-label">Número <span class="text-danger">*</span></label><input type="text" inputmode="numeric" class="form-control" name="numero" placeholder="000001" maxlength="12" pattern="[0-9]+" required></div>
+                <div class="col-md-6 col-xl-2"><label class="form-label">Tipo de comprobante <span class="text-danger">*</span></label><select class="form-select" id="documentType" name="tipo_documento" required><option value="Factura">Factura</option><option value="Boleta">Boleta</option></select></div>
+                <div class="col-md-3 col-xl-2"><label class="form-label">Serie automática</label><input type="text" class="form-control readonly-field" id="documentSeries" value="F001" readonly></div>
+                <div class="col-md-3 col-xl-2"><label class="form-label">Número</label><input type="text" class="form-control readonly-field" value="Se asignará al guardar" readonly></div>
             </div>
             <div class="row g-3">
                 <div class="col-md-6 col-xl-3"><label class="form-label">Fecha de emisión <span class="text-danger">*</span></label><input type="date" class="form-control" name="fecha" value="<?php echo date('Y-m-d'); ?>" required></div>
                 <div class="col-md-6 col-xl-3"><label class="form-label">Tipo de operación</label><select name="tipo_operacion" class="form-select"><option value="Venta interna">Venta interna</option><option value="Venta para exportación">Venta para exportación</option></select></div>
-                <div class="col-md-6 col-xl-3"><label class="form-label">Moneda</label><select name="moneda" id="saleCurrency" class="form-select"><option value="PEN">Soles (PEN)</option></select></div>
-                <div class="col-md-6 col-xl-3"><label class="form-label">Tipo de cambio</label><input type="number" id="exchangeRate" name="tipo_cambio" class="form-control readonly-field" value="1.000" min="0.001" step="0.001" readonly></div>
+                <div class="col-md-6 col-xl-3"><label class="form-label">Moneda</label><select name="moneda" id="saleCurrency" class="form-select"><option value="PEN">PEN - Soles</option><option value="USD">USD - Dólares estadounidenses</option></select></div>
+                <div class="col-md-6 col-xl-3"><label class="form-label">Tipo de cambio utilizado</label><input type="number" id="exchangeRate" name="tipo_cambio" class="form-control readonly-field" value="1.000" min="0.001" max="1000" step="0.001" readonly required></div>
             </div>
         </div>
     </div>
@@ -176,6 +176,18 @@ document.addEventListener('DOMContentLoaded', function() {
     const delivery = document.getElementById('deliveryMode');
     const terms = document.getElementById('paymentTerms');
     const due = document.getElementById('dueDate');
+    const documentType = document.getElementById('documentType');
+    const documentSeries = document.getElementById('documentSeries');
+    const currency = document.getElementById('saleCurrency');
+    const exchangeRate = document.getElementById('exchangeRate');
+    documentType.addEventListener('change', () => { documentSeries.value = documentType.value === 'Boleta' ? 'B001' : 'F001'; });
+    currency.addEventListener('change', () => {
+        const pen = currency.value === 'PEN';
+        exchangeRate.readOnly = pen;
+        exchangeRate.classList.toggle('readonly-field', pen);
+        if (pen) exchangeRate.value = '1.000';
+        else { exchangeRate.value = ''; exchangeRate.focus(); }
+    });
     terms.addEventListener('change', () => { due.disabled = terms.value !== 'credito'; due.required = terms.value === 'credito'; if (due.disabled) due.value = ''; });
     form.dataset.requiresStock = 'true';
     const preview = form.querySelector('.dispatch-preview');

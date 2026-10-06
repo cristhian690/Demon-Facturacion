@@ -1,0 +1,102 @@
+[
+    {
+        "id": 1,
+        "empresa_id": 1,
+        "venta_id": 1,
+        "request_id": "d846b2eca809d39bb06a826eae3e6278",
+        "fecha": "2026-09-10",
+        "importe": 103.84,
+        "medio": "Contado",
+        "referencia": "Pago automático al confirmar"
+    },
+    {
+        "id": 2,
+        "empresa_id": 1,
+        "venta_id": 3,
+        "request_id": "251a306f222cae65f66bc776ea72aad3",
+        "fecha": "2026-09-14",
+        "importe": 63.72,
+        "medio": "Contado",
+        "referencia": "Pago automático al confirmar"
+    },
+    {
+        "id": 3,
+        "empresa_id": 2,
+        "venta_id": 4,
+        "request_id": "ea703b9910241157bbc3d23a8745818e",
+        "fecha": "2026-09-10",
+        "importe": 113.28,
+        "medio": "Contado",
+        "referencia": "Pago automático al confirmar"
+    },
+    {
+        "id": 4,
+        "empresa_id": 2,
+        "venta_id": 6,
+        "request_id": "5b1e9f9d978e0c194d6c959387174284",
+        "fecha": "2026-09-14",
+        "importe": 66.08,
+        "medio": "Contado",
+        "referencia": "Pago automático al confirmar"
+    },
+    {
+        "id": 5,
+        "empresa_id": 3,
+        "venta_id": 7,
+        "request_id": "70d001e5dbab508b6453c622ed160482",
+        "fecha": "2026-09-10",
+        "importe": 122.72,
+        "medio": "Contado",
+        "referencia": "Pago automático al confirmar"
+    },
+    {
+        "id": 6,
+        "empresa_id": 3,
+        "venta_id": 9,
+        "request_id": "c92a1bf8d3555408e74e7a3e0226ca1f",
+        "fecha": "2026-09-14",
+        "importe": 68.44,
+        "medio": "Contado",
+        "referencia": "Pago automático al confirmar"
+    },
+    {
+        "id": 7,
+        "empresa_id": 3,
+        "venta_id": 8,
+        "request_id": "5d4e06a8499ffd012c226dff540d8459",
+        "fecha": "2026-09-15",
+        "importe": 175.23,
+        "medio": "Transferencia",
+        "referencia": "Pago ficticio de demostración"
+    },
+    {
+        "id": 8,
+        "empresa_id": 4,
+        "venta_id": 10,
+        "request_id": "fb2626638cfe99e7659548c64ce3f03f",
+        "fecha": "2026-09-10",
+        "importe": 132.16,
+        "medio": "Contado",
+        "referencia": "Pago automático al confirmar"
+    },
+    {
+        "id": 9,
+        "empresa_id": 4,
+        "venta_id": 12,
+        "request_id": "3587138c6416e2e6c5373f10cbc64791",
+        "fecha": "2026-09-14",
+        "importe": 70.8,
+        "medio": "Contado",
+        "referencia": "Pago automático al confirmar"
+    },
+    {
+        "id": 10,
+        "empresa_id": 4,
+        "venta_id": 11,
+        "request_id": "4102f9933fc7198428cba8867ec5040b",
+        "fecha": "2026-09-15",
+        "importe": 361.08,
+        "medio": "Transferencia",
+        "referencia": "Pago ficticio de demostración"
+    }
+]

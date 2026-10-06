@@ -35,7 +35,7 @@ $is_edit = $almacen !== null;
             <?php endif; ?>
             
             <div class="row mb-3">
-                <div class="col-md-5">
+                <div class="col-md-7">
                     <label class="form-label">Nombre del Almacén <span class="text-danger">*</span></label>
                     <input type="text" class="form-control" name="nombre" required 
                            value="<?php echo $is_edit ? htmlspecialchars($almacen['nombre']) : ''; ?>">
@@ -44,13 +44,6 @@ $is_edit = $almacen !== null;
                     <label class="form-label">Ubicación</label>
                     <input type="text" class="form-control" name="ubicacion" 
                            value="<?php echo $is_edit ? htmlspecialchars($almacen['ubicacion'] ?? '') : ''; ?>">
-                </div>
-                <div class="col-md-2">
-                    <label class="form-label">Estado <span class="text-danger">*</span></label>
-                    <select class="form-select" name="estado">
-                        <option value="Activo" <?php echo ($is_edit && ($almacen['estado'] ?? '') == 'Activo') ? 'selected' : ''; ?>>Activo</option>
-                        <option value="Inactivo" <?php echo ($is_edit && ($almacen['estado'] ?? '') == 'Inactivo') ? 'selected' : ''; ?>>Inactivo</option>
-                    </select>
                 </div>
             </div>
             

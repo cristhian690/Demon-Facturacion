@@ -33,13 +33,15 @@ function process_return($input) {
         if($remaining>0.0001) throw new InvalidArgumentException('No se pudo trazar la devolución a sus despachos originales.');
         $returnedCost = 0;
         foreach($slices as $slice){
-            $previous=$inventory[$index]; $value=round($slice['cantidad']*$slice['costo_unitario'],2); $stock=round($previous['stock_actual']+$slice['cantidad'],3); $newValue=round($previous['valor_inventario']+$value,2); $cpp=$stock>0?$newValue/$stock:0;
+            // Keep the historical dispatch cost at full internal precision. Money is
+            // rounded only when presented, not before updating inventory and CPP.
+            $previous=$inventory[$index]; $value=$slice['cantidad']*$slice['costo_unitario']; $stock=round($previous['stock_actual']+$slice['cantidad'],3); $newValue=$previous['valor_inventario']+$value; $cpp=$stock>0?$newValue/$stock:0;
             $returnedCost += $value;
             $inventory[$index]=array_merge($previous,['stock_actual'=>$stock,'valor_inventario'=>$newValue,'cpp'=>$cpp]);
             $ledger[]=['id'=>$ledgerId++,'empresa_id'=>$sale['empresa_id'],'venta_id'=>$sale['id'],'devolucion_id'=>$returnId,'request_id'=>$request,'producto_id'=>$line['producto_id'],'almacen_id'=>$sale['almacen_id'],'fecha'=>$date,'documento'=>'DEV '.$sale['serie'].'-'.$sale['numero'],'tipo_operacion'=>'DEVOLUCION_VENTA','entrada_cantidad'=>$slice['cantidad'],'entrada_costo'=>$slice['costo_unitario'],'entrada_valor'=>$value,'salida_cantidad'=>0,'salida_costo'=>0,'salida_valor'=>0,'saldo_cantidad'=>$stock,'saldo_valor'=>$newValue,'cpp'=>$cpp];
         }
-        $sale['detalles'][$i]['costo_devuelto_total'] = round(($sale['detalles'][$i]['costo_devuelto_total'] ?? 0) + $returnedCost, 2);
-        $sale['costo_devoluciones_total'] = round(($sale['costo_devoluciones_total'] ?? 0) + $returnedCost, 2);
+        $sale['detalles'][$i]['costo_devuelto_total'] = ($sale['detalles'][$i]['costo_devuelto_total'] ?? 0) + $returnedCost;
+        $sale['costo_devoluciones_total'] = ($sale['costo_devoluciones_total'] ?? 0) + $returnedCost;
         $lineCredit=round(($line['subtotal']/$line['cantidad'])*$qty*1.18,2); $credit+=$lineCredit;
         $details[]=['linea'=>$i,'producto_id'=>$line['producto_id'],'cantidad'=>$qty,'importe_credito'=>$lineCredit,'origenes'=>$slices];
     }

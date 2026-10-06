@@ -2,140 +2,63 @@
     {
         "id": 1,
         "empresa_id": 1,
-        "cliente_id": 2,
-        "tipo_documento": "Factura",
-        "serie": "F001",
-        "numero": "000123",
-        "fecha": "2026-09-17",
-        "almacen_id": 1,
-        "subtotal": 12000,
-        "igv": 2160,
-        "total": 14160,
-        "costo_ventas_total": 14000,
-        "detalles": [
-            {
-                "producto_id": 1,
-                "cantidad": 4,
-                "precio_unitario": 3000,
-                "descuento": 0,
-                "subtotal": 12000,
-                "costo_venta_unitario": 3500,
-                "costo_venta_total": 14000
-            }
-        ],
-        "impacto_simulacion": [
-            {
-                "producto_id": 1,
-                "stock_anterior": 100,
-                "cpp_vigente": 3500,
-                "cantidad_vendida": 4,
-                "precio_venta": 3000,
-                "nuevo_stock": 96,
-                "costo_venta_linea": 14000
-            }
-        ]
-    },
-    {
-        "id": 2,
-        "empresa_id": 1,
-        "cliente_id": 3,
+        "cliente_id": 1,
         "almacen_id": 2,
-        "request_id": "3d9c49a305cc38ea9087a460accb0bff",
+        "request_id": "d846b2eca809d39bb06a826eae3e6278",
         "detalles": [
             {
-                "producto_id": 4,
+                "producto_id": 3,
+                "unidad_medida": "KG",
                 "cantidad": 8,
-                "subtotal": 8,
+                "subtotal": 88,
                 "descuento": 0,
-                "precio_unitario": 1,
-                "costo_venta_unitario": 100,
-                "costo_venta_total": 800
+                "despachado": 8,
+                "precio_unitario": 11,
+                "costo_venta_unitario": 5,
+                "costo_venta_total": 40
             }
         ],
         "tipo_documento": "Factura",
         "serie": "F001",
-        "numero": "000421",
-        "fecha": "2026-09-18",
-        "subtotal": 8,
-        "igv": 1.44,
-        "total": 9.44,
-        "impacto_simulacion": [
-            {
-                "producto_id": 4,
-                "stock_anterior": 10,
-                "cpp_anterior": 100,
-                "cpp_vigente": 100,
-                "cantidad_vendida": 8,
-                "cantidad_comprada": 8,
-                "precio_venta": 1,
-                "costo_compra": 100,
-                "nuevo_stock": 2,
-                "nuevo_cpp": 100,
-                "costo_venta_linea": 800
-            }
-        ],
-        "costo_ventas_total": 800
-    },
-    {
-        "id": 3,
-        "empresa_id": 1,
-        "cliente_id": 3,
-        "almacen_id": 2,
-        "request_id": "e448030fad53d1bec04e46f00543abb1",
-        "detalles": [
-            {
-                "producto_id": 4,
-                "unidad_medida": "UN",
-                "cantidad": 2,
-                "subtotal": 20,
-                "descuento": 0,
-                "despachado": 2,
-                "precio_unitario": 10,
-                "costo_venta_unitario": 100,
-                "costo_venta_total": 200
-            }
-        ],
-        "tipo_documento": "Factura",
-        "serie": "F001",
-        "numero": "0012",
-        "fecha": "2026-10-06",
+        "numero": "1",
+        "fecha": "2026-09-10",
         "tipo_operacion": "Venta interna",
         "moneda": "PEN",
         "tipo_cambio": 1,
         "orden_compra": "",
-        "observacion": "",
+        "observacion": "Operación ficticia para demostración",
         "vendedor": "Administrador",
-        "subtotal": 20,
-        "igv": 3.6,
-        "total": 23.6,
+        "subtotal": 88,
+        "igv": 15.84,
+        "total": 103.84,
         "impacto_simulacion": [
             {
-                "producto_id": 4,
-                "stock_anterior": 2,
-                "cpp_anterior": 100,
-                "cpp_vigente": 100,
-                "cantidad_vendida": 2,
-                "cantidad_comprada": 2,
-                "precio_venta": 10,
-                "costo_compra": 100,
+                "producto_id": 3,
+                "stock_anterior": 8,
+                "cpp_anterior": 5,
+                "cpp_vigente": 5,
+                "cantidad_vendida": 8,
+                "cantidad_comprada": 8,
+                "precio_venta": 11,
+                "costo_compra": 5,
                 "nuevo_stock": 0,
-                "nuevo_cpp": 100,
-                "costo_venta_linea": 200
+                "nuevo_cpp": 5,
+                "costo_venta_linea": 40
             }
         ],
-        "costo_ventas_total": 200,
+        "costo_ventas_total": 40,
         "entrega": "inmediata",
         "despachos": [
             {
-                "request_id": "e448030fad53d1bec04e46f00543abb1",
-                "fecha": "2026-10-06",
+                "request_id": "d846b2eca809d39bb06a826eae3e6278",
+                "fecha": "2026-09-10",
                 "detalles": [
                     {
                         "linea": 0,
-                        "producto_id": 4,
-                        "cantidad": 2,
-                        "costo_unitario": 100,
-                        "costo_total": 200
+                        "producto_id": 3,
+                        "cantidad": 8,
+                        "costo_unitario": 5,
+                        "costo_total": 40
                     }
                 ],
                 "origen": "Confirmación de venta"
@@ -144,6 +67,668 @@
         "condicion_pago": "contado",
         "fecha_vencimiento": "",
         "estado_documento": "Vigente",
+        "devoluciones": [],
+        "pago_contado_automatico": true
+    },
+    {
+        "id": 2,
+        "empresa_id": 1,
+        "cliente_id": 2,
+        "almacen_id": 1,
+        "request_id": "b312c43f36301d7e470e8d99b803caab",
+        "detalles": [
+            {
+                "producto_id": 2,
+                "unidad_medida": "LT",
+                "cantidad": 9,
+                "subtotal": 279,
+                "descuento": 0,
+                "despachado": 9,
+                "precio_unitario": 31,
+                "costo_venta_unitario": 19,
+                "costo_venta_total": 171
+            }
+        ],
+        "tipo_documento": "Factura",
+        "serie": "F001",
+        "numero": "2",
+        "fecha": "2026-09-12",
+        "tipo_operacion": "Venta interna",
+        "moneda": "PEN",
+        "tipo_cambio": 1,
+        "orden_compra": "",
+        "observacion": "Operación ficticia para demostración",
+        "vendedor": "Administrador",
+        "subtotal": 279,
+        "igv": 50.22,
+        "total": 329.22,
+        "impacto_simulacion": [
+            {
+                "producto_id": 2,
+                "stock_anterior": 10,
+                "cpp_anterior": 19,
+                "cpp_vigente": 19,
+                "cantidad_vendida": 9,
+                "cantidad_comprada": 9,
+                "precio_venta": 31,
+                "costo_compra": 19,
+                "nuevo_stock": 1,
+                "nuevo_cpp": 19,
+                "costo_venta_linea": 171
+            }
+        ],
+        "costo_ventas_total": 171,
+        "entrega": "inmediata",
+        "despachos": [
+            {
+                "request_id": "b312c43f36301d7e470e8d99b803caab",
+                "fecha": "2026-09-12",
+                "detalles": [
+                    {
+                        "linea": 0,
+                        "producto_id": 2,
+                        "cantidad": 9,
+                        "costo_unitario": 19,
+                        "costo_total": 171
+                    }
+                ],
+                "origen": "Confirmación de venta"
+            }
+        ],
+        "condicion_pago": "credito",
+        "fecha_vencimiento": "2026-10-15",
+        "estado_documento": "Vigente",
         "devoluciones": []
+    },
+    {
+        "id": 3,
+        "empresa_id": 1,
+        "cliente_id": 3,
+        "almacen_id": 2,
+        "request_id": "251a306f222cae65f66bc776ea72aad3",
+        "detalles": [
+            {
+                "producto_id": 4,
+                "unidad_medida": "UN",
+                "cantidad": 2,
+                "precio_unitario": 27,
+                "subtotal": 54,
+                "descuento": 0,
+                "despachado": 0,
+                "costo_venta_unitario": 0,
+                "costo_venta_total": 0
+            }
+        ],
+        "tipo_documento": "Factura",
+        "serie": "F001",
+        "numero": "3",
+        "fecha": "2026-09-14",
+        "tipo_operacion": "Venta interna",
+        "moneda": "PEN",
+        "tipo_cambio": 1,
+        "orden_compra": "",
+        "observacion": "Operación ficticia para demostración",
+        "vendedor": "Administrador",
+        "subtotal": 54,
+        "igv": 9.72,
+        "total": 63.72,
+        "impacto_simulacion": [],
+        "costo_ventas_total": 0,
+        "entrega": "pendiente",
+        "despachos": [],
+        "condicion_pago": "contado",
+        "fecha_vencimiento": "",
+        "estado_documento": "Vigente",
+        "devoluciones": [],
+        "pago_contado_automatico": true
+    },
+    {
+        "id": 4,
+        "empresa_id": 2,
+        "cliente_id": 6,
+        "almacen_id": 4,
+        "request_id": "ea703b9910241157bbc3d23a8745818e",
+        "detalles": [
+            {
+                "producto_id": 8,
+                "unidad_medida": "KG",
+                "cantidad": 8,
+                "subtotal": 96,
+                "descuento": 0,
+                "despachado": 8,
+                "precio_unitario": 12,
+                "costo_venta_unitario": 6,
+                "costo_venta_total": 48
+            }
+        ],
+        "tipo_documento": "Factura",
+        "serie": "F001",
+        "numero": "1",
+        "fecha": "2026-09-10",
+        "tipo_operacion": "Venta interna",
+        "moneda": "PEN",
+        "tipo_cambio": 1,
+        "orden_compra": "",
+        "observacion": "Operación ficticia para demostración",
+        "vendedor": "Administrador",
+        "subtotal": 96,
+        "igv": 17.28,
+        "total": 113.28,
+        "impacto_simulacion": [
+            {
+                "producto_id": 8,
+                "stock_anterior": 8,
+                "cpp_anterior": 6,
+                "cpp_vigente": 6,
+                "cantidad_vendida": 8,
+                "cantidad_comprada": 8,
+                "precio_venta": 12,
+                "costo_compra": 6,
+                "nuevo_stock": 0,
+                "nuevo_cpp": 6,
+                "costo_venta_linea": 48
+            }
+        ],
+        "costo_ventas_total": 48,
+        "entrega": "inmediata",
+        "despachos": [
+            {
+                "request_id": "ea703b9910241157bbc3d23a8745818e",
+                "fecha": "2026-09-10",
+                "detalles": [
+                    {
+                        "linea": 0,
+                        "producto_id": 8,
+                        "cantidad": 8,
+                        "costo_unitario": 6,
+                        "costo_total": 48
+                    }
+                ],
+                "origen": "Confirmación de venta"
+            }
+        ],
+        "condicion_pago": "contado",
+        "fecha_vencimiento": "",
+        "estado_documento": "Vigente",
+        "devoluciones": [],
+        "pago_contado_automatico": true
+    },
+    {
+        "id": 5,
+        "empresa_id": 2,
+        "cliente_id": 7,
+        "almacen_id": 3,
+        "request_id": "54f22ead50dd48c64374aa159dd5c514",
+        "detalles": [
+            {
+                "producto_id": 7,
+                "unidad_medida": "LT",
+                "cantidad": 9,
+                "subtotal": 288,
+                "descuento": 0,
+                "despachado": 9,
+                "precio_unitario": 32,
+                "costo_venta_unitario": 20,
+                "costo_venta_total": 180
+            }
+        ],
+        "tipo_documento": "Factura",
+        "serie": "F001",
+        "numero": "2",
+        "fecha": "2026-09-12",
+        "tipo_operacion": "Venta interna",
+        "moneda": "PEN",
+        "tipo_cambio": 1,
+        "orden_compra": "",
+        "observacion": "Operación ficticia para demostración",
+        "vendedor": "Administrador",
+        "subtotal": 288,
+        "igv": 51.84,
+        "total": 339.84000000000003,
+        "impacto_simulacion": [
+            {
+                "producto_id": 7,
+                "stock_anterior": 10,
+                "cpp_anterior": 20,
+                "cpp_vigente": 20,
+                "cantidad_vendida": 9,
+                "cantidad_comprada": 9,
+                "precio_venta": 32,
+                "costo_compra": 20,
+                "nuevo_stock": 1,
+                "nuevo_cpp": 20,
+                "costo_venta_linea": 180
+            }
+        ],
+        "costo_ventas_total": 180,
+        "entrega": "inmediata",
+        "despachos": [
+            {
+                "request_id": "54f22ead50dd48c64374aa159dd5c514",
+                "fecha": "2026-09-12",
+                "detalles": [
+                    {
+                        "linea": 0,
+                        "producto_id": 7,
+                        "cantidad": 9,
+                        "costo_unitario": 20,
+                        "costo_total": 180
+                    }
+                ],
+                "origen": "Confirmación de venta"
+            }
+        ],
+        "condicion_pago": "credito",
+        "fecha_vencimiento": "2026-10-15",
+        "estado_documento": "Vigente",
+        "devoluciones": []
+    },
+    {
+        "id": 6,
+        "empresa_id": 2,
+        "cliente_id": 8,
+        "almacen_id": 4,
+        "request_id": "5b1e9f9d978e0c194d6c959387174284",
+        "detalles": [
+            {
+                "producto_id": 9,
+                "unidad_medida": "UN",
+                "cantidad": 2,
+                "precio_unitario": 28,
+                "subtotal": 56,
+                "descuento": 0,
+                "despachado": 0,
+                "costo_venta_unitario": 0,
+                "costo_venta_total": 0
+            }
+        ],
+        "tipo_documento": "Factura",
+        "serie": "F001",
+        "numero": "3",
+        "fecha": "2026-09-14",
+        "tipo_operacion": "Venta interna",
+        "moneda": "PEN",
+        "tipo_cambio": 1,
+        "orden_compra": "",
+        "observacion": "Operación ficticia para demostración",
+        "vendedor": "Administrador",
+        "subtotal": 56,
+        "igv": 10.08,
+        "total": 66.08,
+        "impacto_simulacion": [],
+        "costo_ventas_total": 0,
+        "entrega": "pendiente",
+        "despachos": [],
+        "condicion_pago": "contado",
+        "fecha_vencimiento": "",
+        "estado_documento": "Vigente",
+        "devoluciones": [],
+        "pago_contado_automatico": true
+    },
+    {
+        "id": 7,
+        "empresa_id": 3,
+        "cliente_id": 11,
+        "almacen_id": 6,
+        "request_id": "70d001e5dbab508b6453c622ed160482",
+        "detalles": [
+            {
+                "producto_id": 13,
+                "unidad_medida": "KG",
+                "cantidad": 8,
+                "subtotal": 104,
+                "descuento": 0,
+                "despachado": 8,
+                "precio_unitario": 13,
+                "costo_venta_unitario": 7,
+                "costo_venta_total": 56
+            }
+        ],
+        "tipo_documento": "Factura",
+        "serie": "F001",
+        "numero": "1",
+        "fecha": "2026-09-10",
+        "tipo_operacion": "Venta interna",
+        "moneda": "PEN",
+        "tipo_cambio": 1,
+        "orden_compra": "",
+        "observacion": "Operación ficticia para demostración",
+        "vendedor": "Administrador",
+        "subtotal": 104,
+        "igv": 18.72,
+        "total": 122.72,
+        "impacto_simulacion": [
+            {
+                "producto_id": 13,
+                "stock_anterior": 8,
+                "cpp_anterior": 7,
+                "cpp_vigente": 7,
+                "cantidad_vendida": 8,
+                "cantidad_comprada": 8,
+                "precio_venta": 13,
+                "costo_compra": 7,
+                "nuevo_stock": 0,
+                "nuevo_cpp": 7,
+                "costo_venta_linea": 56
+            }
+        ],
+        "costo_ventas_total": 56,
+        "entrega": "inmediata",
+        "despachos": [
+            {
+                "request_id": "70d001e5dbab508b6453c622ed160482",
+                "fecha": "2026-09-10",
+                "detalles": [
+                    {
+                        "linea": 0,
+                        "producto_id": 13,
+                        "cantidad": 8,
+                        "costo_unitario": 7,
+                        "costo_total": 56
+                    }
+                ],
+                "origen": "Confirmación de venta"
+            }
+        ],
+        "condicion_pago": "contado",
+        "fecha_vencimiento": "",
+        "estado_documento": "Vigente",
+        "devoluciones": [],
+        "pago_contado_automatico": true
+    },
+    {
+        "id": 8,
+        "empresa_id": 3,
+        "cliente_id": 12,
+        "almacen_id": 5,
+        "request_id": "3f512665e3a454eb2d4a34d9f8eb5907",
+        "detalles": [
+            {
+                "producto_id": 12,
+                "unidad_medida": "LT",
+                "cantidad": 9,
+                "subtotal": 297,
+                "descuento": 0,
+                "despachado": 9,
+                "precio_unitario": 33,
+                "costo_venta_unitario": 21,
+                "costo_venta_total": 189
+            }
+        ],
+        "tipo_documento": "Factura",
+        "serie": "F001",
+        "numero": "2",
+        "fecha": "2026-09-12",
+        "tipo_operacion": "Venta interna",
+        "moneda": "PEN",
+        "tipo_cambio": 1,
+        "orden_compra": "",
+        "observacion": "Operación ficticia para demostración",
+        "vendedor": "Administrador",
+        "subtotal": 297,
+        "igv": 53.46,
+        "total": 350.46,
+        "impacto_simulacion": [
+            {
+                "producto_id": 12,
+                "stock_anterior": 10,
+                "cpp_anterior": 21,
+                "cpp_vigente": 21,
+                "cantidad_vendida": 9,
+                "cantidad_comprada": 9,
+                "precio_venta": 33,
+                "costo_compra": 21,
+                "nuevo_stock": 1,
+                "nuevo_cpp": 21,
+                "costo_venta_linea": 189
+            }
+        ],
+        "costo_ventas_total": 189,
+        "entrega": "inmediata",
+        "despachos": [
+            {
+                "request_id": "3f512665e3a454eb2d4a34d9f8eb5907",
+                "fecha": "2026-09-12",
+                "detalles": [
+                    {
+                        "linea": 0,
+                        "producto_id": 12,
+                        "cantidad": 9,
+                        "costo_unitario": 21,
+                        "costo_total": 189
+                    }
+                ],
+                "origen": "Confirmación de venta"
+            }
+        ],
+        "condicion_pago": "credito",
+        "fecha_vencimiento": "2026-10-15",
+        "estado_documento": "Vigente",
+        "devoluciones": []
+    },
+    {
+        "id": 9,
+        "empresa_id": 3,
+        "cliente_id": 13,
+        "almacen_id": 6,
+        "request_id": "c92a1bf8d3555408e74e7a3e0226ca1f",
+        "detalles": [
+            {
+                "producto_id": 14,
+                "unidad_medida": "UN",
+                "cantidad": 2,
+                "precio_unitario": 29,
+                "subtotal": 58,
+                "descuento": 0,
+                "despachado": 0,
+                "costo_venta_unitario": 0,
+                "costo_venta_total": 0
+            }
+        ],
+        "tipo_documento": "Factura",
+        "serie": "F001",
+        "numero": "3",
+        "fecha": "2026-09-14",
+        "tipo_operacion": "Venta interna",
+        "moneda": "PEN",
+        "tipo_cambio": 1,
+        "orden_compra": "",
+        "observacion": "Operación ficticia para demostración",
+        "vendedor": "Administrador",
+        "subtotal": 58,
+        "igv": 10.44,
+        "total": 68.44,
+        "impacto_simulacion": [],
+        "costo_ventas_total": 0,
+        "entrega": "pendiente",
+        "despachos": [],
+        "condicion_pago": "contado",
+        "fecha_vencimiento": "",
+        "estado_documento": "Vigente",
+        "devoluciones": [],
+        "pago_contado_automatico": true
+    },
+    {
+        "id": 10,
+        "empresa_id": 4,
+        "cliente_id": 16,
+        "almacen_id": 8,
+        "request_id": "fb2626638cfe99e7659548c64ce3f03f",
+        "detalles": [
+            {
+                "producto_id": 18,
+                "unidad_medida": "KG",
+                "cantidad": 8,
+                "subtotal": 112,
+                "descuento": 0,
+                "despachado": 8,
+                "precio_unitario": 14,
+                "costo_venta_unitario": 8,
+                "costo_venta_total": 64
+            }
+        ],
+        "tipo_documento": "Factura",
+        "serie": "F001",
+        "numero": "1",
+        "fecha": "2026-09-10",
+        "tipo_operacion": "Venta interna",
+        "moneda": "PEN",
+        "tipo_cambio": 1,
+        "orden_compra": "",
+        "observacion": "Operación ficticia para demostración",
+        "vendedor": "Administrador",
+        "subtotal": 112,
+        "igv": 20.16,
+        "total": 132.16,
+        "impacto_simulacion": [
+            {
+                "producto_id": 18,
+                "stock_anterior": 8,
+                "cpp_anterior": 8,
+                "cpp_vigente": 8,
+                "cantidad_vendida": 8,
+                "cantidad_comprada": 8,
+                "precio_venta": 14,
+                "costo_compra": 8,
+                "nuevo_stock": 0,
+                "nuevo_cpp": 8,
+                "costo_venta_linea": 64
+            }
+        ],
+        "costo_ventas_total": 64,
+        "entrega": "inmediata",
+        "despachos": [
+            {
+                "request_id": "fb2626638cfe99e7659548c64ce3f03f",
+                "fecha": "2026-09-10",
+                "detalles": [
+                    {
+                        "linea": 0,
+                        "producto_id": 18,
+                        "cantidad": 8,
+                        "costo_unitario": 8,
+                        "costo_total": 64
+                    }
+                ],
+                "origen": "Confirmación de venta"
+            }
+        ],
+        "condicion_pago": "contado",
+        "fecha_vencimiento": "",
+        "estado_documento": "Vigente",
+        "devoluciones": [],
+        "pago_contado_automatico": true
+    },
+    {
+        "id": 11,
+        "empresa_id": 4,
+        "cliente_id": 17,
+        "almacen_id": 7,
+        "request_id": "53948424e6026d9ee7b4443a23f6958c",
+        "detalles": [
+            {
+                "producto_id": 17,
+                "unidad_medida": "LT",
+                "cantidad": 9,
+                "subtotal": 306,
+                "descuento": 0,
+                "despachado": 9,
+                "precio_unitario": 34,
+                "costo_venta_unitario": 22,
+                "costo_venta_total": 198
+            }
+        ],
+        "tipo_documento": "Factura",
+        "serie": "F001",
+        "numero": "2",
+        "fecha": "2026-09-12",
+        "tipo_operacion": "Venta interna",
+        "moneda": "PEN",
+        "tipo_cambio": 1,
+        "orden_compra": "",
+        "observacion": "Operación ficticia para demostración",
+        "vendedor": "Administrador",
+        "subtotal": 306,
+        "igv": 55.08,
+        "total": 361.08,
+        "impacto_simulacion": [
+            {
+                "producto_id": 17,
+                "stock_anterior": 10,
+                "cpp_anterior": 22,
+                "cpp_vigente": 22,
+                "cantidad_vendida": 9,
+                "cantidad_comprada": 9,
+                "precio_venta": 34,
+                "costo_compra": 22,
+                "nuevo_stock": 1,
+                "nuevo_cpp": 22,
+                "costo_venta_linea": 198
+            }
+        ],
+        "costo_ventas_total": 198,
+        "entrega": "inmediata",
+        "despachos": [
+            {
+                "request_id": "53948424e6026d9ee7b4443a23f6958c",
+                "fecha": "2026-09-12",
+                "detalles": [
+                    {
+                        "linea": 0,
+                        "producto_id": 17,
+                        "cantidad": 9,
+                        "costo_unitario": 22,
+                        "costo_total": 198
+                    }
+                ],
+                "origen": "Confirmación de venta"
+            }
+        ],
+        "condicion_pago": "credito",
+        "fecha_vencimiento": "2026-10-15",
+        "estado_documento": "Vigente",
+        "devoluciones": []
+    },
+    {
+        "id": 12,
+        "empresa_id": 4,
+        "cliente_id": 18,
+        "almacen_id": 8,
+        "request_id": "3587138c6416e2e6c5373f10cbc64791",
+        "detalles": [
+            {
+                "producto_id": 19,
+                "unidad_medida": "UN",
+                "cantidad": 2,
+                "precio_unitario": 30,
+                "subtotal": 60,
+                "descuento": 0,
+                "despachado": 0,
+                "costo_venta_unitario": 0,
+                "costo_venta_total": 0
+            }
+        ],
+        "tipo_documento": "Factura",
+        "serie": "F001",
+        "numero": "3",
+        "fecha": "2026-09-14",
+        "tipo_operacion": "Venta interna",
+        "moneda": "PEN",
+        "tipo_cambio": 1,
+        "orden_compra": "",
+        "observacion": "Operación ficticia para demostración",
+        "vendedor": "Administrador",
+        "subtotal": 60,
+        "igv": 10.8,
+        "total": 70.8,
+        "impacto_simulacion": [],
+        "costo_ventas_total": 0,
+        "entrega": "pendiente",
+        "despachos": [],
+        "condicion_pago": "contado",
+        "fecha_vencimiento": "",
+        "estado_documento": "Vigente",
+        "devoluciones": [],
+        "pago_contado_automatico": true
     }
 ]

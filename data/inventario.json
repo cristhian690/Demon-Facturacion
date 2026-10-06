@@ -2,65 +2,161 @@
     {
         "producto_id": 1,
         "almacen_id": 1,
-        "empresa_id": 2,
-        "stock_actual": 10,
-        "cpp": 2000,
-        "valor_inventario": 20000
-    },
-    {
-        "producto_id": 6,
-        "almacen_id": 3,
-        "empresa_id": 2,
-        "stock_actual": 10,
-        "cpp": 100,
-        "valor_inventario": 1000
-    },
-    {
-        "producto_id": 7,
-        "almacen_id": 3,
-        "empresa_id": 2,
-        "stock_actual": 10,
-        "cpp": 50,
-        "valor_inventario": 500
-    },
-    {
-        "producto_id": 1,
-        "almacen_id": 1,
         "empresa_id": 1,
-        "stock_actual": 97,
-        "cpp": 3500,
-        "valor_inventario": 339500
+        "stock_actual": 25,
+        "cpp": 10.4,
+        "valor_inventario": 260
     },
     {
         "producto_id": 2,
         "almacen_id": 1,
         "empresa_id": 1,
-        "stock_actual": 50,
-        "cpp": 450,
-        "valor_inventario": 22500
+        "stock_actual": 1,
+        "cpp": 19,
+        "valor_inventario": 19
     },
     {
         "producto_id": 3,
-        "almacen_id": 1,
+        "almacen_id": 2,
         "empresa_id": 1,
-        "stock_actual": 10,
-        "cpp": 2000,
-        "valor_inventario": 20000
+        "stock_actual": 0,
+        "cpp": 5,
+        "valor_inventario": 0
     },
     {
         "producto_id": 4,
         "almacen_id": 2,
         "empresa_id": 1,
-        "stock_actual": 0,
-        "cpp": 100,
-        "valor_inventario": 0
+        "stock_actual": 12,
+        "cpp": 14,
+        "valor_inventario": 168
     },
     {
         "producto_id": 5,
-        "almacen_id": 2,
+        "almacen_id": 1,
         "empresa_id": 1,
-        "stock_actual": 10,
-        "cpp": 50,
-        "valor_inventario": 500
+        "stock_actual": 6,
+        "cpp": 8,
+        "valor_inventario": 48
+    },
+    {
+        "producto_id": 6,
+        "almacen_id": 3,
+        "empresa_id": 2,
+        "stock_actual": 25,
+        "cpp": 11.4,
+        "valor_inventario": 285
+    },
+    {
+        "producto_id": 7,
+        "almacen_id": 3,
+        "empresa_id": 2,
+        "stock_actual": 1,
+        "cpp": 20,
+        "valor_inventario": 20
+    },
+    {
+        "producto_id": 8,
+        "almacen_id": 4,
+        "empresa_id": 2,
+        "stock_actual": 0,
+        "cpp": 6,
+        "valor_inventario": 0
+    },
+    {
+        "producto_id": 9,
+        "almacen_id": 4,
+        "empresa_id": 2,
+        "stock_actual": 12,
+        "cpp": 15,
+        "valor_inventario": 180
+    },
+    {
+        "producto_id": 10,
+        "almacen_id": 3,
+        "empresa_id": 2,
+        "stock_actual": 6,
+        "cpp": 9,
+        "valor_inventario": 54
+    },
+    {
+        "producto_id": 11,
+        "almacen_id": 5,
+        "empresa_id": 3,
+        "stock_actual": 25,
+        "cpp": 12.4,
+        "valor_inventario": 310
+    },
+    {
+        "producto_id": 12,
+        "almacen_id": 5,
+        "empresa_id": 3,
+        "stock_actual": 1,
+        "cpp": 21,
+        "valor_inventario": 21
+    },
+    {
+        "producto_id": 13,
+        "almacen_id": 6,
+        "empresa_id": 3,
+        "stock_actual": 0,
+        "cpp": 7,
+        "valor_inventario": 0
+    },
+    {
+        "producto_id": 14,
+        "almacen_id": 6,
+        "empresa_id": 3,
+        "stock_actual": 12,
+        "cpp": 16,
+        "valor_inventario": 192
+    },
+    {
+        "producto_id": 15,
+        "almacen_id": 5,
+        "empresa_id": 3,
+        "stock_actual": 6,
+        "cpp": 10,
+        "valor_inventario": 60
+    },
+    {
+        "producto_id": 16,
+        "almacen_id": 7,
+        "empresa_id": 4,
+        "stock_actual": 25,
+        "cpp": 13.4,
+        "valor_inventario": 335
+    },
+    {
+        "producto_id": 17,
+        "almacen_id": 7,
+        "empresa_id": 4,
+        "stock_actual": 1,
+        "cpp": 22,
+        "valor_inventario": 22
+    },
+    {
+        "producto_id": 18,
+        "almacen_id": 8,
+        "empresa_id": 4,
+        "stock_actual": 0,
+        "cpp": 8,
+        "valor_inventario": 0
+    },
+    {
+        "producto_id": 19,
+        "almacen_id": 8,
+        "empresa_id": 4,
+        "stock_actual": 12,
+        "cpp": 17,
+        "valor_inventario": 204
+    },
+    {
+        "producto_id": 20,
+        "almacen_id": 7,
+        "empresa_id": 4,
+        "stock_actual": 6,
+        "cpp": 11,
+        "valor_inventario": 66
     }
 ]

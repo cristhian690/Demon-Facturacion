@@ -14,6 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['empresa_id'])) {
         $empresas = json_decode($empresasJson, true);
         foreach ($empresas as $emp) {
             if ((int)$emp['id'] === $empresa_id) {
+                if (($emp['estado'] ?? 'Activo') !== 'Activo') { http_response_code(422); exit('La empresa seleccionada está inactiva.'); }
                 if (($_SESSION['empresa_id'] ?? null) != $empresa_id) $_SESSION['form_token'] = bin2hex(random_bytes(32));
                 $_SESSION['empresa_id'] = $empresa_id;
                 $_SESSION['empresa_nombre'] = $emp['razon_social'];

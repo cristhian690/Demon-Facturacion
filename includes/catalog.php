@@ -1,14 +1,15 @@
 <?php
 function save_catalog($table, $input) {
     $fields = [
-        'clientes' => ['tipo_documento','numero_documento','nombre','direccion','telefono','correo'],
-        'proveedores' => ['tipo_documento','numero_documento','nombre','direccion','telefono','correo'],
+        'clientes' => ['tipo_documento','numero_documento','nombre','direccion','telefono','correo','estado'],
+        'proveedores' => ['tipo_documento','numero_documento','nombre','direccion','telefono','correo','estado'],
         'productos' => ['sku','nombre','descripcion','categoria','marca','unidad_medida','stock_minimo','estado'],
         'almacenes' => ['nombre','ubicacion','estado']
     ];
     $required = ['nombre','sku','unidad_medida','tipo_documento','numero_documento','estado'];
     $id = input_text($input, 'id');
     $record = $id !== '' ? owned_record($table, $id) : ['id' => next_id($table), 'empresa_id' => (int)$_SESSION['empresa_id']];
+    if (!array_key_exists('estado', $input)) $input['estado'] = $record['estado'] ?? 'Activo';
     foreach ($fields[$table] as $field) $record[$field] = input_text($input, $field, in_array($field, $required, true));
     if (!empty($record['correo']) && !filter_var($record['correo'], FILTER_VALIDATE_EMAIL)) throw new InvalidArgumentException('Ingresa un correo válido.');
     if (isset($record['tipo_documento'])) {
@@ -31,4 +32,35 @@ function save_catalog($table, $input) {
     save_data($table, $rows);
     $labels = ['clientes'=>'Cliente','proveedores'=>'Proveedor','productos'=>'Producto','almacenes'=>'Almacén'];
     return ['record' => $record, 'message' => $labels[$table] . ($id !== '' ? ' actualizado: ' : ' agregado: ') . $record['nombre']];
+}
+
+function catalog_history_count($table, $id) {
+    $relations = [
+        'clientes' => [['ventas', 'cliente_id']],
+        'proveedores' => [['compras', 'proveedor_id']],
+        'productos' => [['inventario', 'producto_id'], ['kardex', 'producto_id']],
+        'almacenes' => [['inventario', 'almacen_id'], ['kardex', 'almacen_id'], ['compras', 'almacen_id'], ['ventas', 'almacen_id']]
+    ];
+    if (!isset($relations[$table])) throw new InvalidArgumentException('Módulo inválido.');
+    $count = 0;
+    foreach ($relations[$table] as [$source, $field]) {
+        foreach (get_data($source) as $row) if ((string)($row[$field] ?? '') === (string)$id) $count++;
+    }
+    return $count;
+}
+
+function set_catalog_status($table, $id, $status) {
+    if (!in_array($table, ['clientes','proveedores','productos','almacenes'], true)) throw new InvalidArgumentException('Módulo inválido.');
+    if (!in_array($status, ['Activo','Inactivo'], true)) throw new InvalidArgumentException('Estado inválido.');
+    $record = owned_record($table, $id);
+    $rows = get_data($table);
+    foreach ($rows as &$row) if ((string)$row['id'] === (string)$record['id']) { $row['estado'] = $status; $record = $row; break; }
+    unset($row);
+    save_data($table, $rows);
+    $labels = ['clientes'=>'Cliente','proveedores'=>'Proveedor','productos'=>'Producto','almacenes'=>'Almacén'];
+    return [
+        'record'=>$record,
+        'history_count'=>catalog_history_count($table, $record['id']),
+        'message'=>$labels[$table] . ($status === 'Activo' ? ' reactivado: ' : ' desactivado: ') . $record['nombre']
+    ];
 }

@@ -52,7 +52,7 @@ $sunat_open = sidebar_has('/sunat/');
             <div class="sidebar-submenu">
                 <a href="<?php echo url('pages/inventario/kardex.php'); ?>" class="<?php echo sidebar_class($kardex_open); ?>"><i class="bi bi-search"></i><span>Consulta Kardex</span></a>
                 <a href="<?php echo url('pages/inventario/kardex.php#movimientos'); ?>"><i class="bi bi-list-check"></i><span>Movimientos</span></a>
-                <span class="sidebar-coming"><i class="bi bi-download"></i><span>Exportar Kardex</span><em>Próximamente</em></span>
+                <a href="<?php echo url('actions/exportar_kardex.php?empresa_id='.(int)($_SESSION['empresa_id']??0)); ?>"><i class="bi bi-download"></i><span>Exportar Kardex</span></a>
             </div>
         </div>
 
